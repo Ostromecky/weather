@@ -12,7 +12,7 @@ import {DecimalPipe} from "@angular/common";
   template: `
     <mat-form-field>
       <input [value]="weatherFacade.city()" autocomplete="off" placeholder="Enter city" #cityCtrl matInput>
-      <mat-icon matSuffix (click)="search(cityCtrl.value)">search</mat-icon>
+      <mat-icon matSuffix (click)="search(cityCtrl.value.trim())">search</mat-icon>
     </mat-form-field>
     @if (weatherFacade.weather(); as weather) {
       <mat-card>
