@@ -8,7 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "preserver": "ng build --configuration production",
-    "server": "http-server -p 8080 -c-1 dist/weather/browser"
+    "server": "http-server -p 8080 -c-1 dist/weather/browser",
+    "analyze-sourcemap": "ng build --source-map && source-map-explorer dist/weather/**/*.js"
   },
   "private": true,
   "dependencies": {
@@ -17,6 +18,7 @@
     "@angular/common": "^17.3.0",
     "@angular/compiler": "^17.3.0",
     "@angular/core": "^17.3.0",
+    "@angular/fire": "^17.0.1",
     "@angular/forms": "^17.3.0",
     "@angular/material": "^17.3.6",
     "@angular/platform-browser": "^17.3.0",
@@ -26,6 +28,7 @@
     "@ngneat/until-destroy": "^10.0.0",
     "ngxtension": "^3.0.1",
     "rxjs": "~7.8.0",
+    "source-map-explorer": "^2.5.3",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },

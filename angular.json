@@ -33,6 +33,10 @@
           },
           "configurations": {
             "production": {
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -93,6 +97,23 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "version": 2
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "weather:build:production",
+              "serveTarget": "weather:serve:production"
+            },
+            "development": {
+              "buildTarget": "weather:build:development",
+              "serveTarget": "weather:serve:development"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }

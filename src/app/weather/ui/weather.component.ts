@@ -20,10 +20,10 @@ import {DecimalPipe} from "@angular/common";
           <mat-card-title>{{ weather.name }}, {{ weather.sys.country }}</mat-card-title>
           <mat-card-subtitle>{{ weather.weather[0].main }}</mat-card-subtitle>
         </mat-card-header>
-        <img mat-card-image [src]="'http://openweathermap.org/img/wn/' + weather.weather[0].icon + '@2x.png'"
+        <img mat-card-image [src]="'http://openweathermap.org/img/wn/' + weather.weather[0].icon + '@4x.png'"
              [alt]="weather.weather[0].main">
         <mat-card-content>
-          <h1>{{ weather.main.temp | number: '1.0-0' }} <span [innerHTML]="'&#8451;'"></span></h1>
+          <h1>{{ weather.main.temp | number: '1.0-0' }} <span [innerHTML]="celcius"></span></h1>
           <p>Pressure: {{ weather.main.pressure }} hPa</p>
           <p>Humidity: {{ weather.main.humidity }} %</p>
           <p>Wind: {{ weather.wind.speed }} m/s</p>
