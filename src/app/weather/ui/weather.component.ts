@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatCardModule} from "@angular/material/card";
 import {WeatherFacade} from "./weather.facade";
@@ -6,6 +6,7 @@ import {MatInput} from "@angular/material/input";
 import {ReactiveFormsModule} from "@angular/forms";
 import {MatIcon} from "@angular/material/icon";
 import {DecimalPipe} from "@angular/common";
+import { NgOptimizedImage } from '@angular/common'
 
 @Component({
   selector: 'app-weather',
@@ -20,7 +21,7 @@ import {DecimalPipe} from "@angular/common";
           <mat-card-title>{{ weather.name }}, {{ weather.sys.country }}</mat-card-title>
           <mat-card-subtitle>{{ weather.weather[0].main }}</mat-card-subtitle>
         </mat-card-header>
-        <img mat-card-image [src]="'http://openweathermap.org/img/wn/' + weather.weather[0].icon + '@4x.png'"
+        <img mat-card-image [ngSrc]="iconUrl()" width="250" height="250"
              [alt]="weather.weather[0].main">
         <mat-card-content>
           <h1>{{ weather.main.temp | number: '1.0-0' }} <span [innerHTML]="celcius"></span></h1>
@@ -34,13 +35,18 @@ import {DecimalPipe} from "@angular/common";
   styleUrls: ['./weather.component.scss'],
   standalone: true,
   providers: [WeatherFacade],
-  imports: [MatFormFieldModule, MatCardModule, MatInput, ReactiveFormsModule, MatIcon, DecimalPipe],
+  imports: [MatFormFieldModule, MatCardModule, MatInput, ReactiveFormsModule, MatIcon, DecimalPipe, NgOptimizedImage],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class WeatherComponent {
   protected weatherFacade: WeatherFacade = inject(WeatherFacade);
   protected celcius = '&#8451;';
+  protected iconUrl = computed(() => {
+    const weather = this.weatherFacade.weather();
+    if(!weather) return '';
+    return 'http://openweathermap.org/img/wn/' + weather.weather[0].icon + '@4x.png';
+  })
 
   search(city: string) {
     this.weatherFacade.search$.next(city)
