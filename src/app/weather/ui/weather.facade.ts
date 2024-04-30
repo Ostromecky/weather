@@ -60,7 +60,9 @@ export class WeatherFacade {
       );
 
     effect(() => {
-      this.search$.next(this.query() ?? '');
+      if (this.query()) {
+        this.search$.next(this.query()!);
+      }
     }, {allowSignalWrites: true});
   }
 
