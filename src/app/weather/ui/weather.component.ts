@@ -45,7 +45,7 @@ export class WeatherComponent {
   protected iconUrl = computed(() => {
     const weather = this.weatherFacade.weather();
     if(!weather) return '';
-    return 'http://openweathermap.org/img/wn/' + weather.weather[0].icon + '@4x.png';
+    return 'https://openweathermap.org/img/wn/' + weather.weather[0].icon + '@4x.png';
   })
 
   search(city: string) {
