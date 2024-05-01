@@ -1,12 +1,13 @@
-import {computed, effect, inject, Injectable, signal} from '@angular/core';
+import {computed, inject, Injectable, signal} from '@angular/core';
 import {WeatherService} from "../data-access/weather.service";
 import {WeatherState} from "./weather.model";
-import {catchError, concat, defer, filter, first, map, Observable, of, Subject, switchMap} from "rxjs";
+import {catchError, concat, filter, first, map, Observable, of, share, Subject, switchMap} from "rxjs";
 import {connect} from "ngxtension/connect";
 import {injectQueryParams} from "ngxtension/inject-query-params";
 import {Weather} from "../data-access/weather.model";
 import {ToastService} from "../../toast/toast.model";
 import {CityService} from "../../location/city.service";
+import {toObservable} from "@angular/core/rxjs-interop";
 
 @Injectable()
 export class WeatherFacade {
@@ -29,22 +30,22 @@ export class WeatherFacade {
   search$ = new Subject<string>();
 
   constructor() {
-    const initCity$ = defer(() => this.search$).pipe(
+    const initCity$ = toObservable(this.query).pipe(
       switchMap((value) => {
         if (!value) {
-          return this.cityService.getCity().pipe(first());
+          return this.cityService.getCity();
         }
         return of(value);
       }),
+      first()
     );
-    const city$ = concat(initCity$, this.search$);
+    const city$ = concat(initCity$, this.search$).pipe(share());
     const nextWeather$ = city$.pipe(
         filter(Boolean),
         switchMap(city => this.getWeather(city).pipe(
           filter(Boolean)
         ))
-      )
-    ;
+      );
 
     connect(this.state)
       .with(nextWeather$, (state, weather) => ({
@@ -58,12 +59,6 @@ export class WeatherFacade {
           city
         })
       );
-
-    effect(() => {
-      if (this.query()) {
-        this.search$.next(this.query()!);
-      }
-    }, {allowSignalWrites: true});
   }
 
   private getWeather(city: string): Observable<Weather | undefined> {

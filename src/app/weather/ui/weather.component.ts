@@ -22,7 +22,7 @@ import { NgOptimizedImage } from '@angular/common'
           <mat-card-subtitle>{{ weather.weather[0].main }}</mat-card-subtitle>
         </mat-card-header>
         <img mat-card-image [ngSrc]="iconUrl()" width="250" height="250"
-             [alt]="weather.weather[0].main">
+             [alt]="weather.weather[0].main" priority>
         <mat-card-content>
           <h1>{{ weather.main.temp | number: '1.0-0' }} <span [innerHTML]="celcius"></span></h1>
           <p>Pressure: {{ weather.main.pressure }} hPa</p>
