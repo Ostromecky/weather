@@ -2,7 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {catchError, Observable, throwError} from "rxjs";
 import {Weather, WeatherParams} from "./weather.model";
-import {HttpParamsBuilder} from "../utils/http-params";
+import {HttpParamsBuilder} from "../../shared/utils/http-params";
 
 @Injectable({providedIn: 'root'})
 export class WeatherService {
