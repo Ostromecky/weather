@@ -1,11 +1,11 @@
 import {HttpParams} from "@angular/common/http";
 
-type Param = string | number | boolean;
+type Params = { [key: string]: string | number | boolean };
 
-export class TypeSafeHttpParams<T extends Record<string, Param>, K extends keyof T = keyof T> {
+export class HttpParamsBuilder<PType extends Params> {
   htpParams: HttpParams = new HttpParams();
 
-  set(key: K, value: T[K]): TypeSafeHttpParams<T> {
+  set<K extends keyof PType>(key: K, value: PType[K]): HttpParamsBuilder<PType> {
     this.htpParams.set(key as string, value);
     return this;
   }
