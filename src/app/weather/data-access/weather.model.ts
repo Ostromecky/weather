@@ -8,7 +8,6 @@ export interface Weather {
 
 interface WeatherSys {
   country: string;
-
 }
 
 interface WeatherWind {
@@ -30,3 +29,10 @@ export type WeatherState = {
   weather: Weather | undefined;
   city: string;
 };
+
+export type WeatherParams = {
+  //city name
+  q: string;
+  units: 'metric' | 'imperial' | 'standard';
+  appid: string;
+}

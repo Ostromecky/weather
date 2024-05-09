@@ -1,7 +1,8 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {catchError, Observable, throwError} from "rxjs";
-import {Weather} from "./weather.model";
+import {Weather, WeatherParams} from "./weather.model";
+import {TypeSafeHttpParams} from "../utils/http-params";
 
 @Injectable({providedIn: 'root'})
 export class WeatherService {
@@ -12,7 +13,7 @@ export class WeatherService {
 
 
   getWeather(city: string): Observable<Weather> {
-    const params = new HttpParams().set('units', 'metric').set('q', city).set('appid', this.apiKey);
+    const params = new TypeSafeHttpParams<WeatherParams>().set('units', 'metric').set('q', city).set('appid', this.apiKey).build();
     return this.http.get<Weather>(this.apiUrl + '/weather', {params}).pipe(
       catchError((error: HttpErrorResponse) => {
         console.error(error)
