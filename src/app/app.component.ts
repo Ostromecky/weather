@@ -3,11 +3,11 @@ import {RouterOutlet} from '@angular/router';
 import {WeatherComponent} from "./weather/feature/weather.component";
 import {SwUpdate, VersionReadyEvent} from "@angular/service-worker";
 import {defer, filter, switchMap, tap} from "rxjs";
-import {ToastService} from "./toast/toast.model";
 import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
+import {ToastService} from "./shared/ui/toast/toast.model";
 
 @UntilDestroy()
 @Component({

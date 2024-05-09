@@ -4,7 +4,7 @@ import {catchError, concat, filter, first, map, Observable, of, share, Subject, 
 import {connect} from "ngxtension/connect";
 import {injectQueryParams} from "ngxtension/inject-query-params";
 import {Weather, WeatherState} from "./weather.model";
-import {ToastService} from "../../toast/toast.model";
+import {ToastService} from "../../shared/ui/toast/toast.model";
 import {CityService} from "../../location/city.service";
 import {toObservable} from "@angular/core/rxjs-interop";
 
