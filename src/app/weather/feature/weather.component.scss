@@ -20,7 +20,7 @@ img {
   height: 100%;
 }
 
-mat-card {
+app-weather-card {
   margin-top: 30px;
   width: 250px;
 }
@@ -30,11 +30,11 @@ h1 {
   font-size: 2.5em;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 600px) {
   mat-form-field {
     width: 100%;
   }
-  mat-card {
+  app-weather-card {
     width: 100%;
   }
 }

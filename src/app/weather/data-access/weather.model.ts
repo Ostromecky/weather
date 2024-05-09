@@ -25,3 +25,8 @@ interface WeatherInfo {
   main: string;
   icon: string;
 }
+
+export type WeatherState = {
+  weather: Weather | undefined;
+  city: string;
+};

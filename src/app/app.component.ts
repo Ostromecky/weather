@@ -1,6 +1,6 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
-import {WeatherComponent} from "./weather/ui/weather.component";
+import {WeatherComponent} from "./weather/feature/weather.component";
 import {SwUpdate, VersionReadyEvent} from "@angular/service-worker";
 import {defer, filter, switchMap, tap} from "rxjs";
 import {ToastService} from "./toast/toast.model";

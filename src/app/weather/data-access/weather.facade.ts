@@ -1,10 +1,9 @@
 import {computed, inject, Injectable, signal} from '@angular/core';
-import {WeatherService} from "../data-access/weather.service";
-import {WeatherState} from "./weather.model";
+import {WeatherService} from "./weather.service";
 import {catchError, concat, filter, first, map, Observable, of, share, Subject, switchMap} from "rxjs";
 import {connect} from "ngxtension/connect";
 import {injectQueryParams} from "ngxtension/inject-query-params";
-import {Weather} from "../data-access/weather.model";
+import {Weather, WeatherState} from "./weather.model";
 import {ToastService} from "../../toast/toast.model";
 import {CityService} from "../../location/city.service";
 import {toObservable} from "@angular/core/rxjs-interop";
