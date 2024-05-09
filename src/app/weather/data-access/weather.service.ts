@@ -14,8 +14,6 @@ export class WeatherService {
 
   getWeather(city: string): Observable<Weather> {
     const params = new HttpParamsBuilder<WeatherParams>().set('units', 'metric').set('q', city).set('appid', this.apiKey).build();
-
-    console.log(params);
     return this.http.get<Weather>(this.apiUrl + '/weather', {params}).pipe(
       catchError((error: HttpErrorResponse) => {
         console.error(error)
