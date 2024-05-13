@@ -18,7 +18,9 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(provideFirebaseApp(() => initializeApp(environment.firebase))),
     importProvidersFrom(provideFunctions(() => {
       const functions = getFunctions();
-      connectFunctionsEmulator(getFunctions(), 'localhost', 5001);
+      if (isDevMode()) {
+        connectFunctionsEmulator(getFunctions(), 'localhost', 5001);
+      }
       return functions;
     }))
   ]
