@@ -1,23 +1,24 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {catchError, Observable, throwError} from "rxjs";
+import {catchError, from, map, Observable, throwError} from "rxjs";
 import {Weather, WeatherParams} from "./weather.model";
-import {HttpParamsBuilder} from "../../shared/utils/http-params";
+import {Functions, httpsCallable} from "@angular/fire/functions";
 
 @Injectable({providedIn: 'root'})
 export class WeatherService {
-  private http: HttpClient = inject(HttpClient);
-  //TODO make an injector
-  private apiKey = 'd0fb407404512935d745210663eafffd';
-  private apiUrl = 'https://api.openweathermap.org/data/2.5/';
-
+  private functions: Functions = inject(Functions);
 
   getWeather(city: string): Observable<Weather> {
-    const params = new HttpParamsBuilder<WeatherParams>().set('units', 'metric').set('q', city).set('appid', this.apiKey).build();
-    return this.http.get<Weather>(this.apiUrl + '/weather', {params}).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.error(error)
-        return throwError(() => new Error(error.error.message));
-      }))
+    // const params = new HttpParamsBuilder<WeatherParams>().set('units', 'metric').set('q', city).build();
+    const callable = from(httpsCallable<WeatherParams, Weather>(this.functions, 'getWeather')({
+      units: 'metric',
+      q: city
+    }));
+    return callable.pipe(
+      map((response) => response.data),
+      catchError((error) => {
+        console.error(error.message);
+        return throwError(() => new Error(error.message));
+      })
+    );
   }
 }

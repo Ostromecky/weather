@@ -40,11 +40,11 @@ export class WeatherFacade {
     );
     const city$ = concat(initCity$, this.search$).pipe(share());
     const nextWeather$ = city$.pipe(
-        filter(Boolean),
-        switchMap(city => this.getWeather(city).pipe(
-          filter(Boolean)
-        ))
-      );
+      filter(Boolean),
+      switchMap(city => this.getWeather(city).pipe(
+        filter(Boolean)
+      ))
+    );
 
     connect(this.state)
       .with(nextWeather$, (state, weather) => ({

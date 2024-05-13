@@ -1,14 +1,12 @@
 import {inject, Injectable} from '@angular/core';
 import {GeolocationService} from "./geolocation.service";
-import {HttpClient} from "@angular/common/http";
-import {filter, map, Observable, switchMap} from "rxjs";
+import {filter, from, map, Observable, switchMap} from "rxjs";
+import {Functions, httpsCallable} from "@angular/fire/functions";
 
 @Injectable({providedIn: 'root'})
 export class CityService {
   private geoLocation: GeolocationService = inject(GeolocationService);
-  private http: HttpClient = inject(HttpClient);
-  private url = `https://maps.googleapis.com/maps/api/geocode`
-  private apiKey = 'AIzaSyBe1tzipxqgpzihxZRD2RLPmCEYGLtANQ8'
+  private functions: Functions = inject(Functions);
 
   getCity(): Observable<string> {
     const geolocation$ = this.geoLocation.getCurrentPosition();
@@ -19,8 +17,12 @@ export class CityService {
   }
 
   private getCityByGeolocation(latitude: number, longitude: number): Observable<string> {
-    return this.http.get(`${this.url}/json?latlng=${latitude},${longitude}&key=${this.apiKey}`).pipe(
-      map((data: any) => data.results[0].address_components.find((component: any) => component.types.includes('locality')).long_name),
+    const callable = from(httpsCallable<{ latitude: number, longitude: number }, string>(this.functions, 'getCity')({
+      latitude,
+      longitude
+    }));
+    return callable.pipe(
+      map((response) => response.data),
     );
   }
 }

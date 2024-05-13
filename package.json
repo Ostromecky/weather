@@ -26,6 +26,7 @@
     "@angular/router": "^17.3.0",
     "@angular/service-worker": "^17.3.0",
     "@ngneat/until-destroy": "^10.0.0",
+    "firebase": "^10.11.1",
     "ngxtension": "^3.0.1",
     "rxjs": "~7.8.0",
     "source-map-explorer": "^2.5.3",
