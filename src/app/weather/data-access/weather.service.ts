@@ -8,6 +8,7 @@ export class WeatherService {
   private functions: Functions = inject(Functions);
 
   getWeather(city: string): Observable<Weather> {
+    this.functions.region = 'europe-central2';
     // const params = new HttpParamsBuilder<WeatherParams>().set('units', 'metric').set('q', city).build();
     const callable = from(httpsCallable<WeatherParams, Weather>(this.functions, 'getWeather')({
       units: 'metric',

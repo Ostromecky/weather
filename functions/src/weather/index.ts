@@ -8,6 +8,7 @@ import {NotFoundError} from '../shared/error';
 export const getWeather = onCall({
   cors: true,
   secrets: ['APP_ID'],
+  region: 'europe-central2',
 }, async ({data: {q, units}}: CallableRequest<WeatherParams>): Promise<HttpsCallableResult<Weather>> => {
   logger.info('[GET WEATHER DATA]');
   const apiKey = process.env['APP_ID'] as string;

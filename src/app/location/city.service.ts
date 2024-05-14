@@ -17,6 +17,7 @@ export class CityService {
   }
 
   private getCityByGeolocation(latitude: number, longitude: number): Observable<string> {
+    this.functions.region = 'europe-central2';
     const callable = from(httpsCallable<{ latitude: number, longitude: number }, string>(this.functions, 'getCity')({
       latitude,
       longitude

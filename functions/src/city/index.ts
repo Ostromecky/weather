@@ -7,6 +7,7 @@ import {NotFoundError} from '../shared/error';
 export const getCity = onCall({
   cors: true,
   secrets: ['GOOGLE_API_KEY'],
+  region: 'europe-central2',
 }, async ({data: {latitude, longitude}}: CallableRequest<{
   latitude: number,
   longitude: number
