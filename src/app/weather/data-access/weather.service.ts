@@ -2,12 +2,10 @@ import {inject, Injectable} from '@angular/core';
 import {catchError, from, map, Observable, throwError} from "rxjs";
 import {ForecastParams, Weather, WeatherForecast, WeatherParams} from "./weather.model";
 import {Functions, httpsCallable} from "@angular/fire/functions";
-import {HttpClient} from "@angular/common/http";
 
 @Injectable({providedIn: 'root'})
 export class WeatherService {
   private functions: Functions = inject(Functions);
-  private http: HttpClient = inject(HttpClient);
 
   constructor() {
     this.functions.region = 'europe-central2';

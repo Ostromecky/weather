@@ -13,6 +13,3 @@ export const getForecast = onCall({
   logger.info('[GET FORECAST DATA]');
   return await new ForecastService().getForecast(data);
 });
-
-
-
