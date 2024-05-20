@@ -1,0 +1,13 @@
+:host {
+  --mdc-list-list-item-one-line-container-height: 60px;
+}
+
+ mat-card {
+   height: 100%;
+ }
+
+.forecast-item {
+  &-image {
+    vertical-align: middle;
+  }
+}

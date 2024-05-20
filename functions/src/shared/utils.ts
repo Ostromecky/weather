@@ -1,6 +1,6 @@
 type Params = { [key: string]: string | number | boolean | string[] | number[] };
 
-const isArray = (value: any): value is any[] => Array.isArray(value);
+const isArray = (value: unknown): value is unknown[] => Array.isArray(value);
 
 export const toUrl = <T extends Params, K extends keyof T = keyof T>(url: string, params?: Record<K, T[K]>): string => {
   if (!params) return url;

@@ -7,6 +7,23 @@
   padding-top: 25px;
 }
 
+.weather {
+  &-container {
+    display: flex;
+    gap: 1.5em;
+    flex-flow: row wrap;
+    margin-top: 2em;
+
+    app-weather-card {
+      flex-grow: 1;
+    }
+
+    app-forecast-card {
+      flex-grow: 1;
+    }
+  }
+}
+
 mat-form-field {
   width: 20%;
 }
@@ -20,10 +37,9 @@ img {
   height: 100%;
 }
 
-app-weather-card {
-  margin-top: 30px;
-  width: 250px;
-}
+//app-weather-card {
+//  width: 250px;
+//}
 
 h1 {
   text-align: center;
@@ -32,9 +48,6 @@ h1 {
 
 @media screen and (max-width: 600px) {
   mat-form-field {
-    width: 100%;
-  }
-  app-weather-card {
     width: 100%;
   }
 }

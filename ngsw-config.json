@@ -26,5 +26,19 @@
         ]
       }
     }
+  ],
+  "dataGroups": [
+    {
+      "name": "weather-api-icons",
+      "urls": [
+        "https://api.openweathermap.org/img/**"
+      ],
+      "cacheConfig": {
+        "maxSize": 20,
+        "maxAge": "1w",
+        "timeout": "10s",
+        "strategy": "freshness"
+      }
+    }
   ]
 }

@@ -2,10 +2,11 @@ import {ChangeDetectionStrategy, Component, input, InputSignal} from '@angular/c
 import {Weather} from "../../data-access/weather.model";
 import {MatCardModule} from "@angular/material/card";
 import {DecimalPipe, NgOptimizedImage} from "@angular/common";
+import {IconPipe} from "../pipes/icon.pipe";
 
 @Component({
   selector: 'app-weather-card',
-  imports: [MatCardModule, DecimalPipe, NgOptimizedImage],
+  imports: [MatCardModule, DecimalPipe, NgOptimizedImage, IconPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './weather-card.component.scss',
   template: `
@@ -15,7 +16,7 @@ import {DecimalPipe, NgOptimizedImage} from "@angular/common";
           <mat-card-title>{{ weather.name }}, {{ weather.sys.country }}</mat-card-title>
           <mat-card-subtitle>{{ weather.weather[0].main }}</mat-card-subtitle>
         </mat-card-header>
-        <img mat-card-image [ngSrc]="iconUrl()" width="250" height="250"
+        <img mat-card-image [ngSrc]="weather.weather[0].icon | appWeatherIcon" width="250" height="250"
              [alt]="weather.weather[0].main" priority>
         <mat-card-content>
           <h1>{{ weather.main.temp | number: '1.0-0' }} <span [innerHTML]="celcius"></span></h1>
@@ -30,6 +31,5 @@ import {DecimalPipe, NgOptimizedImage} from "@angular/common";
 })
 export class WeatherCardComponent {
   weather: InputSignal<Weather | undefined> = input<Weather | undefined>();
-  iconUrl: InputSignal<string> = input.required<string>();
   protected celcius = '&#8451;';
 }

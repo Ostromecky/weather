@@ -3,7 +3,7 @@ import {WeatherService} from "./weather.service";
 import {catchError, concat, filter, first, map, Observable, of, share, Subject, switchMap} from "rxjs";
 import {connect} from "ngxtension/connect";
 import {injectQueryParams} from "ngxtension/inject-query-params";
-import {Weather, WeatherState} from "./weather.model";
+import {Weather, WeatherForecast, WeatherState} from "./weather.model";
 import {ToastService} from "../../shared/ui/toast/toast.model";
 import {CityService} from "../../location/city.service";
 import {toObservable} from "@angular/core/rxjs-interop";
@@ -18,12 +18,14 @@ export class WeatherFacade {
   //state
   private state = signal<WeatherState>({
     weather: undefined,
+    forecast: undefined,
     city: ''
   });
 
   // selectors
   weather = computed(() => this.state().weather);
   city = computed(() => this.state().city);
+  forecast = computed(() => this.state().forecast);
 
   //sources
   search$ = new Subject<string>();
@@ -43,10 +45,17 @@ export class WeatherFacade {
       filter(Boolean),
       switchMap(city => this.getWeather(city).pipe(
         filter(Boolean)
-      ))
+      )),
+      share()
     );
 
-    connect(this.state)
+
+    const nextForecast$ = nextWeather$.pipe(
+      switchMap(weather => this.getWeatherForecast(weather.coord.lat, weather.coord.lon)),
+      filter(Boolean),
+    );
+
+    connect<WeatherState>(this.state)
       .with(nextWeather$, (state, weather) => ({
         ...state,
         weather
@@ -57,7 +66,11 @@ export class WeatherFacade {
           ...state,
           city
         })
-      );
+      )
+      .with(nextForecast$, (state, forecast) => ({
+        ...state,
+        forecast
+      }));
   }
 
   private getWeather(city: string): Observable<Weather | undefined> {
@@ -66,6 +79,15 @@ export class WeatherFacade {
           return this.toastService.showError$(error.message).pipe(map(() => undefined)
           )
         }
+      )
+    );
+  }
+
+  private getWeatherForecast(lat: number, lon: number): Observable<WeatherForecast> {
+    return this.weatherService.getWeatherForecast(lat, lon).pipe(
+      catchError((error: Error) =>
+        this.toastService.showError$(error.message).pipe(map(() => ({list: []}))
+        )
       )
     );
   }
