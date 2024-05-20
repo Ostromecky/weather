@@ -9,18 +9,12 @@
 
 .weather {
   &-container {
+    width: 100%;
     display: flex;
+    justify-content: center;
     gap: 1.5em;
     flex-flow: row wrap;
     margin-top: 2em;
-
-    app-weather-card {
-      flex-grow: 1;
-    }
-
-    app-forecast-card {
-      flex-grow: 1;
-    }
   }
 }
 
@@ -49,5 +43,10 @@ h1 {
 @media screen and (max-width: 600px) {
   mat-form-field {
     width: 100%;
+  }
+  .weather {
+    &-container {
+      flex-direction: column;
+    }
   }
 }
