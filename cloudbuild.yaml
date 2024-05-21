@@ -1,3 +1,0 @@
-setps: 
-- name: 'gcr.io/cloud-builders/gcloud'
-  args: ['functions', 'deploy', 'getWeather', '--source=.']
