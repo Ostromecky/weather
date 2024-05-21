@@ -1,3 +1,3 @@
 steps:
-      - name: gcr.io/weathe/firebase
+      - name: gcr.io/weather/firebase
         args: ['deploy', '--project=weather', '--only=hosting']
