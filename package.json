@@ -8,6 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "preserver": "ng build --configuration production",
+    "deploy": "ng deploy",
     "server": "http-server -p 8080 -c-1 dist/weather/browser",
     "analyze-sourcemap": "ng build --source-map && source-map-explorer dist/weather/**/*.js"
   },

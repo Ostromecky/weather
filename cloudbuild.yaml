@@ -6,5 +6,5 @@ steps:
       - name: 'gcr.io/cloud-builders/npm'
         args: ['run', 'build']
         # Deploy
-      - name: gcr.io/weather-88364/firebase
-        args: ['deploy', '--project=weather-88364', '--only=hosting']
+      - name: 'gcr.io/cloud-builders/npm'
+        args: ['run', 'deploy']
