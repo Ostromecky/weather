@@ -1,3 +1,3 @@
 steps:
-      - name: gcr.io/weather-88364/firebase
-        args: ['deploy', '--project=weather-88364', '--only=functions']
+      - name: gcr.io/weather/firebase
+        args: ['deploy', '--project=weather', '--only=functions']
