@@ -1,12 +1,13 @@
 steps:
   # Install
   - name: 'gcr.io/cloud-builders/npm'
+    dir: 'functions'
     args: [ 'install' ]
 
 
     # Deploy
   - name: 'gcr.io/$PROJECT_ID/firebase'
-    args: [ 'deploy', '--only=functions:${_FUNCTION_NAME}' ]
+    args: [ 'deploy', '--only=functions' ]
 
 
 #steps:
