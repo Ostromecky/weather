@@ -10,7 +10,7 @@ steps:
         - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
         - --key_fallback=npm-build-cache-
 
-  - name: node:latest
+  - name: 'gcr.io/cloud-builders/npm'
     entrypoint: npm
     id: 'Installing NPM dependencies'
     args:
