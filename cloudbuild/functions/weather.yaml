@@ -1,24 +1,24 @@
-#steps:
-#  # Install
-#  - name: 'gcr.io/cloud-builders/npm'
-#    args: [ 'install' ]
-#    dir: 'functions'
-#
-#
-#    # Deploy
-#  - name: 'gcr.io/$PROJECT_ID/firebase'
-#    args: [ 'deploy', '--only=functions:${_FUNCTION_NAME}' ]
-
-
 steps:
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    args:
-      - gcloud
-      - functions
-      - deploy
-      - getWeather
-      - --region=europe-central2
-      - --source=functions
-      - --trigger-http
-      - --runtime=nodejs18
+  # Install
+  - name: 'gcr.io/cloud-builders/npm'
+    args: [ 'install' ]
+    dir: 'functions'
+
+
+    # Deploy
+  - name: 'gcr.io/$PROJECT_ID/firebase'
+    args: [ 'deploy', '--only=functions:${_FUNCTION_NAME}' ]
+
+
+#steps:
+#  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#    args:
+#      - gcloud
+#      - functions
+#      - deploy
+#      - getWeather
+#      - --region=europe-central2
+#      - --source=functions/weather
+#      - --trigger-http
+#      - --runtime=nodejs18
 
