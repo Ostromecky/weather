@@ -29,4 +29,4 @@ steps:
 
     # Deploy
   - name: 'gcr.io/$PROJECT_ID/firebase'
-    args: [ 'deploy', '--only=functions:$FUNCTION_NAME' ]
+    args: [ 'deploy', '--only=functions:${_FUNCTION_NAME}' ]
