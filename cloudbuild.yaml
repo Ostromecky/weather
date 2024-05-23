@@ -1,10 +1,36 @@
 steps:
-      # Install
-      - name: 'gcr.io/cloud-builders/npm'
-        args: ['install']
-      # Build
-      - name: 'gcr.io/cloud-builders/npm'
-        args: ['run', 'build']
-        # Deploy
-      - name: 'gcr.io/$PROJECT_ID/firebase'
-        args: ['deploy', '--only=hosting']
+  # Install
+#  - name: 'gcr.io/cloud-builders/npm'
+#    args: [ 'install' ]
+
+  - name: 'gcr.io/$PROJECT_ID/restore_cache'
+    id: 'Restoring NPM modules cache'
+    args:
+        - --bucket=gs://${PROJECT_ID}_cloudbuild
+        - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
+        - --key_fallback=npm-build-cache-
+
+  - name: node:latest
+    entrypoint: npm
+    id: 'Installing NPM dependencies'
+    args:
+            - ci
+            - install
+            - --prefer-offline
+            - --cache=.npm
+
+  - name: 'gcr.io/$PROJECT_ID/save_cache'
+    id: 'Saving .npm cache'
+    args:
+      - --bucket=gs://${PROJECT_ID}_cloudbuild
+      - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
+      - --path=.npm
+      - --no-clobber
+    waitFor: [ 'Installing NPM dependencies' ]
+
+  # Build
+  - name: 'gcr.io/cloud-builders/npm'
+    args: [ 'run', 'build' ]
+    # Deploy
+  - name: 'gcr.io/$PROJECT_ID/firebase'
+    args: [ 'deploy', '--only=hosting' ]
