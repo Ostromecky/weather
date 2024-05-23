@@ -2,7 +2,9 @@
   "hosting": [
     {
       "target": "weather",
-      "public": "dist/weather",
+      "public": "dist/weather/browser",
+      "frameworksBackend": {
+      },
       "ignore": [
         "firebase.json",
         "**/.*",
