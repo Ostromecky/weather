@@ -1,4 +1,15 @@
 steps:
+#  - name: 'gcr.io/cloud-builders/gcloud'
+#    args:
+#      - kms
+#      - decrypt
+#        --ciphertext-file=.env.enc
+#        --plaintext-file=.env
+#        --location=global
+#        --keyring=cloudbuild
+#        --key=cloudbuild-env
+
+
   # Install
   - name: 'gcr.io/cloud-builders/npm'
     dir: 'functions'
@@ -6,14 +17,10 @@ steps:
 
 
     # Deploy
-  - name: 'gcr.io/$PROJECT_ID/firebase'
-    args: [ 'deploy', '--only=functions']
+  - name: 'gcr.io/$PROJECT_ID/npm'
+    args: [ 'run', 'deploy']
+    dir: 'functions'
     secretEnv: ['FIREBASE_TOKEN']
-
-secrets:
-  - kmsKeyName: 'projects/weather-88364/locations/global/keyRings/weather/cryptoKeys/cloudbuild-env'
-    secretEnv:
-    FIREBASE_TOKEN: CiQAvTU6cUokM8K1dH+4OFfxZ/+A08nW8GUsNoUYxgrFjb/2YroSoAEAHobDDG/TO0dAXuHmNW0+M4noDuQOGyiaiAFGi1EMbxTilZj4DM4pEghBxCNhZKv9d+2rcUPhErMVtHp9JSU6KN0jf2m5X1OA3l+IhGDO+cTVG7VmTGyx6sfGbGYn+DkeWvvjFk/CuEEGncNqFBxGJAQPzF4TdcQ49WMEXAkGdZAX/RGTIKUGe3bjbH5z1UKwRkeeuwwDhA912rKJ1fVy
 
 
 #steps:
