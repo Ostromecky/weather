@@ -10,6 +10,7 @@ steps:
   - name: 'gcr.io/cloud-builders/npm'
     entrypoint: npm
     id: 'Installing NPM dependencies'
+    dir: 'functions'
     args:
       - ci
       - install
