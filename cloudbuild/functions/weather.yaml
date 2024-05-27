@@ -17,10 +17,15 @@ steps:
 
 
     # Deploy
-  - name: 'gcr.io/$PROJECT_ID/npm'
-    args: [ 'run', 'deploy']
-    dir: 'functions'
-    secretEnv: ['FIREBASE_TOKEN']
+  - name: 'gcr.io/$PROJECT_ID/firebase'
+    args: [ 'deploy', '--only=functions' ]
+#    dir: 'functions'
+#    secretEnv: ['FIREBASE_TOKEN']
+
+#availableSecrets:
+#    - kmsKeyName: projects/$PROJECT_ID/locations/global/keyRings/weather/cryptoKeys/cloudbuild-env
+#      envMap:
+#        FIREBASE_TOKEN: CiQAvTU6cWAY7ljv/xp7Z1AqK7ZwJdWMEp3sOR44sSAVheuGQDUSoAEAHobDDJtaUs7B0O6fJXaOAZWvbXAruM6Qy7j3JW2rZrNH9abOurDVXMD4bhLH1cXlNJl8JJLJJ85grlAMPGyQ3OWygEdPmORn4xXM5tEj2OfrRf3SrYMZz4ycSoF+pieMlA461pjTjPZ+0EXAw9Jx4xoQCwciDV45H/EnYmerqeob8DVfY7lDDak0U+dEd3+ktjt/b0nvXWnFetTUsHsO
 
 
 #steps:
