@@ -8,6 +8,7 @@ steps:
     # Deploy
   - name: 'gcr.io/$PROJECT_ID/firebase'
     args: [ 'deploy', '--only=functions' ]
+    secretEnv: ['FIREBASE_TOKEN']
 
 
 #steps:
