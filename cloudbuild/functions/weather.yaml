@@ -1,42 +1,32 @@
 steps:
-#  - name: 'gcr.io/cloud-builders/gcloud'
-#    args:
-#      - kms
-#      - decrypt
-#        --ciphertext-file=.env.enc
-#        --plaintext-file=.env
-#        --location=global
-#        --keyring=cloudbuild
-#        --key=cloudbuild-env
-
-
   # Install
+  - name: 'gcr.io/$PROJECT_ID/restore_cache'
+    id: 'Restoring NPM modules cache'
+    args:
+      - --bucket=gs://${PROJECT_ID}_cloudbuild
+      - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
+      - --key_fallback=npm-build-cache-
+
   - name: 'gcr.io/cloud-builders/npm'
-    dir: 'functions'
-    args: [ 'install' ]
+    entrypoint: npm
+    id: 'Installing NPM dependencies'
+    args:
+      - ci
+      - install
+      - --prefer-offline
+      - --cache=.npm
+
+  - name: 'gcr.io/$PROJECT_ID/save_cache'
+    id: 'Saving .npm cache'
+    args:
+      - --bucket=gs://${PROJECT_ID}_cloudbuild
+      - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
+      - --path=.npm
+      - --no-clobber
+    waitFor: [ 'Installing NPM dependencies' ]
 
 
     # Deploy
   - name: 'gcr.io/$PROJECT_ID/firebase'
     args: [ 'deploy', '--only=functions:$_FUNCTION_NAME']
-#    dir: 'functions'
-#    secretEnv: ['FIREBASE_TOKEN']
-
-#availableSecrets:
-#    - kmsKeyName: projects/$PROJECT_ID/locations/global/keyRings/weather/cryptoKeys/cloudbuild-env
-#      envMap:
-#        FIREBASE_TOKEN: CiQAvTU6cWAY7ljv/xp7Z1AqK7ZwJdWMEp3sOR44sSAVheuGQDUSoAEAHobDDJtaUs7B0O6fJXaOAZWvbXAruM6Qy7j3JW2rZrNH9abOurDVXMD4bhLH1cXlNJl8JJLJJ85grlAMPGyQ3OWygEdPmORn4xXM5tEj2OfrRf3SrYMZz4ycSoF+pieMlA461pjTjPZ+0EXAw9Jx4xoQCwciDV45H/EnYmerqeob8DVfY7lDDak0U+dEd3+ktjt/b0nvXWnFetTUsHsO
-
-
-#steps:
-#  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-#    args:
-#      - gcloud
-#      - functions
-#      - deploy
-#      - getWeather
-#      - --region=europe-central2
-#      - --source=functions/weather
-#      - --trigger-http
-#      - --runtime=nodejs18
 
