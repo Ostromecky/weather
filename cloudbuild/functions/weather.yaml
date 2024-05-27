@@ -3,7 +3,7 @@ steps:
   - name: 'gcr.io/$PROJECT_ID/restore_cache'
     id: 'Restoring NPM modules cache'
     args:
-      - --bucket=gs://${PROJECT_ID}_cloudbuild
+      - --bucket=gs://${PROJECT_ID}_cloudbuild_functions
       - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
       - --key_fallback=npm-build-cache-
 
@@ -19,7 +19,7 @@ steps:
   - name: 'gcr.io/$PROJECT_ID/save_cache'
     id: 'Saving .npm cache'
     args:
-      - --bucket=gs://${PROJECT_ID}_cloudbuild
+      - --bucket=gs://${PROJECT_ID}_cloudbuild_functions
       - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
       - --path=.npm
       - --no-clobber
