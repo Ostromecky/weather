@@ -8,12 +8,13 @@ import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {ToastService} from "./shared/ui/toast/toast.model";
+import {CitySearchComponent} from "./location/feature/city-search.component";
 
 @UntilDestroy()
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, WeatherComponent, MatToolbarModule, MatIconModule, MatButtonModule],
+  imports: [RouterOutlet, WeatherComponent, MatToolbarModule, MatIconModule, MatButtonModule, CitySearchComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

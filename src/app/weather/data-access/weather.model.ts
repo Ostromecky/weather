@@ -1,3 +1,5 @@
+import {CityState} from "../../location/data-access/city.model";
+
 export interface Weather {
   coord: Coordinates;
   weather: WeatherInfo[];
@@ -37,12 +39,11 @@ export type Coordinates = {
 export type WeatherState = {
   weather: Weather | undefined;
   forecast: WeatherForecast | undefined;
-  city: string;
 };
 
 export type WeatherParams = {
   //city name
-  q: string;
+  q: CityState['name'];
   units: 'metric' | 'imperial' | 'standard';
 }
 
