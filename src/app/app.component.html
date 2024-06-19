@@ -1,5 +1,6 @@
 @defer{
 <mat-toolbar color="primary" class="mat-elevation-z2">
+  @if (layoutService.screenSize() === 'Web') {
   <div class="toolbar-prefix">
     <span>Weather App</span>
     <app-city-search />
@@ -11,6 +12,23 @@
   <button mat-icon-button>
     <mat-icon>share</mat-icon>
   </button>
+  } @else {
+    @if (isMobileSearchActive()) {
+      <app-city-search [ngClass]="{'full-width': isMobileSearchActive()}" />
+      <span class="spacer"></span>
+      <button (click)="isMobileSearchActive.set(false)" mat-icon-button>
+      <mat-icon>close</mat-icon>
+      </button>
+    } @else {
+      <div class="toolbar-prefix">
+        <span>Weather App</span>
+      </div>
+      <span class="spacer"></span>
+      <button (click)="isMobileSearchActive.set(true)" mat-icon-button>
+        <mat-icon>search</mat-icon>
+      </button>
+    }
+  }
 </mat-toolbar>
 <app-weather></app-weather>
 }

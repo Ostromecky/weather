@@ -11,6 +11,7 @@ import {environment} from "../environments/environment";
 import {connectFunctionsEmulator, getFunctions, provideFunctions} from "@angular/fire/functions";
 import {connectFirestoreEmulator, getFirestore, provideFirestore} from "@angular/fire/firestore";
 import {provideFirestoreDatabase} from "./shared/data-access/provider";
+import {provideLayoutService} from "./shared/ui/layout/provider";
 
 export const appConfig: ApplicationConfig = {
   providers: [provideRouter(routes), provideAnimationsAsync(), provideHttpClient(), provideServiceWorker('ngsw-worker.js', {
@@ -35,6 +36,7 @@ export const appConfig: ApplicationConfig = {
     })),
     // importProvidersFrom(AngularFireModule.initializeApp(environment.firebase)),
     // importProvidersFrom(AngularFirestoreModule),
-    provideFirestoreDatabase({collection: 'cities'})
+    provideFirestoreDatabase({collection: 'cities'}),
+    provideLayoutService()
   ]
 };

@@ -4,8 +4,13 @@
   justify-content: flex-start;
   gap: 1em;
   flex-grow: 1;
-  app-city-search {
-    width: 100%;
+}
+
+app-city-search {
+  width: 100%;
+
+  &.full-width {
+    flex: 100%;
   }
 }
 

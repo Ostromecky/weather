@@ -7,6 +7,9 @@ import {MatInputModule} from "@angular/material/input";
 import {MatOptionSelectionChange} from "@angular/material/core";
 import {BaseControlValueAccessor} from "../../../shared/utils/base-control-value-accessor.directive";
 import {CityService} from "../../data-access/city.service";
+import {toObservable} from "@angular/core/rxjs-interop";
+import {debounceTime, of, switchMap} from "rxjs";
+import {AsyncPipe} from "@angular/common";
 
 type Option = string;
 
@@ -20,8 +23,8 @@ type Option = string;
              [matAutocomplete]="auto" [disabled]="disabled()">
     </mat-form-field>
     <mat-autocomplete #auto="matAutocomplete">
-      @for (option of options(); track option) {
-        <mat-option (onSelectionChange)="handleSelection($event)" [value]="option">{{ option }}</mat-option>
+      @for (option of options$ | async; track option) {
+        <mat-option (onSelectionChange)="handleSelection($event)" [value]="option.name">{{ option.name }}</mat-option>
       }
     </mat-autocomplete>
   `,
@@ -39,7 +42,7 @@ type Option = string;
     `
   ],
   standalone: true,
-  imports: [MatAutocompleteModule, FormsModule, MatFormFieldModule, MatIconModule, MatInputModule],
+  imports: [MatAutocompleteModule, FormsModule, MatFormFieldModule, MatIconModule, MatInputModule, AsyncPipe],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -50,7 +53,6 @@ type Option = string;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AutocompleteComponent extends BaseControlValueAccessor<Option> {
-  options = input.required<Option[]>();
   placeholder = input.required<string>();
 
   model = viewChild.required(NgModel);
@@ -59,16 +61,16 @@ export class AutocompleteComponent extends BaseControlValueAccessor<Option> {
   private cityService: CityService = inject(CityService);
 
 
-  // protected options$ = toObservable(this.currentValue).pipe(
-  //   debounceTime(200),
-  //   switchMap((query) => {
-  //       if (!query || query.length < 3) {
-  //         return of([]);
-  //       }
-  //       return this.cityService.filterCity(query)
-  //     }
-  //   )
-  // )
+  protected options$ = toObservable(this.currentValue).pipe(
+    debounceTime(200),
+    switchMap((query) => {
+        if (!query || query.length < 3) {
+          return of([]);
+        }
+        return this.cityService.searchCitiesByName(query)
+      }
+    ),
+  );
 
   override ngOnInit() {
     this.valueAccessor = this.model().valueAccessor!;

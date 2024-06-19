@@ -16,7 +16,11 @@ export class CityService {
     this.functions.region = 'europe-central2';
   }
 
-  getCity(): Observable<CityServer> {
+  initCity(name?: string): Observable<CityServer> {
+    console.log('init city: ', name);
+    if (name) {
+      return this.getCityByName(name);
+    }
     const geolocation$ = this.geoLocation.getCurrentPosition();
     return geolocation$.pipe(
       filter(Boolean),
@@ -24,10 +28,33 @@ export class CityService {
     );
   }
 
-  private getCityByName(name: string): Observable<CityServer> {
+  searchCitiesByName(name: string): Observable<CityServer[]> {
     return this.fireStoreService.findByQuery([where('name', '==', name)]).pipe(
-      map((cities) => cities[0])
+      map((cities) => cities)
     );
+  }
+
+  getCityByName(name: string): Observable<CityServer> {
+    return this.fireStoreService.findByQuery([where('name', '==', name)]).pipe(
+      switchMap((cities) => {
+          if (cities.length === 0) {
+            return this.fetchCityByName(name).pipe(
+              switchMap((city) => {
+                return this.fireStoreService.add({
+                  name: city.name,
+                  location: {
+                    latitude: this.roundOneDigit(city.location.latitude),
+                    longitude: this.roundOneDigit(city.location.longitude)
+                  }
+                }).pipe(
+                  map((id) => this.toEntity(id, city)
+                  ))
+              })
+            )
+          }
+          return of(cities[0]);
+        }
+      ));
   }
 
   private getCityByGeolocation(latitude: number, longitude: number): Observable<CityServer> {
@@ -41,31 +68,53 @@ export class CityService {
           return of(cities[0]);
         }
         return this.fetchCityByGeolocation(latitude, longitude).pipe(
-          switchMap((city) => {
-              return this.fireStoreService.findByQuery([where('name', '==', city)]).pipe(
-                switchMap((cities) => {
-                    if (cities.length === 0) {
-                      return this.fireStoreService.add({
-                        name: city,
-                        location: {latitude, longitude}
-                      }).pipe(map(() => city)).pipe(
-                        map((id) => this.toEntity(id, {name: city, location: {latitude, longitude}})
-                        ))
-                    }
-                    return of(cities[0]);
-                  }
-                ));
-            }
+          switchMap((city) =>
+            this.checkCityInDatabase(city.name, latitude, longitude)
           )
         );
       })
     );
   }
 
-  private fetchCityByGeolocation(latitude: number, longitude: number): Observable<string> {
-    const callable = from(httpsCallable<{ latitude: number, longitude: number }, string>(this.functions, 'getCity')({
-      latitude,
-      longitude
+  private checkCityInDatabase(city: string, latitude: number, longitude: number) {
+    return this.fireStoreService.findByQuery([where('name', '==', city)]).pipe(
+      switchMap((cities) => {
+          if (cities.length === 0) {
+            return this.fireStoreService.add({
+              name: city,
+              location: {latitude, longitude}
+            }).pipe(map(() => city)).pipe(
+              map((id) => this.toEntity(id, {name: city, location: {latitude, longitude}})
+              ))
+          }
+          return of(cities[0]);
+        }
+      ));
+  }
+
+  private fetchCityByGeolocation(latitude: number, longitude: number): Observable<City> {
+    const callable = from(httpsCallable<{
+      location: { latitude: number, longitude: number },
+      name?: string
+    }, City>(this.functions, 'getCity')({
+      location: {
+        latitude,
+        longitude
+      },
+      name: undefined
+    }));
+    return callable.pipe(
+      map((response) => response.data)
+    );
+  }
+
+  private fetchCityByName(name: string): Observable<City> {
+    const callable = from(httpsCallable<{
+      location?: { latitude: number, longitude: number },
+      name: string
+    }, City>(this.functions, 'getCity')({
+      location: undefined,
+      name
     }));
     return callable.pipe(
       map((response) => response.data)

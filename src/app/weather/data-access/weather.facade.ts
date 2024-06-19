@@ -30,17 +30,18 @@ export class WeatherFacade {
 
   constructor() {
     const city$ = this.citySearchStateService.city;
-    const nextWeather$ = toObservable(city$).pipe(
+    const city$$ = toObservable(city$).pipe(share());
+    const nextWeather$ = city$$.pipe(
       filter(Boolean),
-      switchMap(city => this.getWeather(city).pipe(
+      switchMap(city => this.getWeather(city.name).pipe(
         filter(Boolean)
       )),
       share()
     );
 
-    const nextForecast$ = nextWeather$.pipe(
-      switchMap(weather => this.getWeatherForecast(weather.coord.lat, weather.coord.lon)),
+    const nextForecast$ = city$$.pipe(
       filter(Boolean),
+      switchMap(city => this.getWeatherForecast(city.location.latitude, city.location.longitude))
     );
 
     connect<WeatherState>(this.state)
