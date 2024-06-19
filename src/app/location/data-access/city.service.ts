@@ -17,7 +17,6 @@ export class CityService {
   }
 
   initCity(name?: string): Observable<CityServer> {
-    console.log('init city: ', name);
     if (name) {
       return this.getCityByName(name);
     }

@@ -6,10 +6,10 @@ import {provideAnimationsAsync} from '@angular/platform-browser/animations/async
 import {provideHttpClient} from "@angular/common/http";
 import {provideServiceWorker} from '@angular/service-worker';
 import {provideRootToast} from "./shared/ui/toast/toast.providers";
-import {initializeApp, provideFirebaseApp} from "@angular/fire/app";
+import {getApp, initializeApp, provideFirebaseApp} from "@angular/fire/app";
 import {environment} from "../environments/environment";
 import {connectFunctionsEmulator, getFunctions, provideFunctions} from "@angular/fire/functions";
-import {connectFirestoreEmulator, getFirestore, provideFirestore} from "@angular/fire/firestore";
+import {connectFirestoreEmulator, getFirestore, initializeFirestore, provideFirestore} from "@angular/fire/firestore";
 import {provideFirestoreDatabase} from "./shared/data-access/provider";
 import {provideLayoutService} from "./shared/ui/layout/provider";
 
@@ -27,16 +27,16 @@ export const appConfig: ApplicationConfig = {
       return functions;
     })),
     importProvidersFrom(provideFirestore(() => {
-      const firestore = getFirestore()
-      console.log(firestore);
+      const app = getApp();
+      const dbName = 'weather';
       if (isDevMode()) {
+      const firestore = getFirestore(app)
         connectFirestoreEmulator(firestore, 'localhost', 8080);
-      }
-
       return firestore;
+      }
+      const providedFirestore = initializeFirestore(app, {}, dbName);
+      return providedFirestore;
     })),
-    // importProvidersFrom(AngularFireModule.initializeApp(environment.firebase)),
-    // importProvidersFrom(AngularFirestoreModule),
     provideFirestoreDatabase({collection: 'cities'}),
     provideLayoutService()
   ]

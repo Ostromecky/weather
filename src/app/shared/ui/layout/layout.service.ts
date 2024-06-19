@@ -46,7 +46,6 @@ export class LayoutService {
         for (const query of Object.keys(result.breakpoints)) {
           if (result.breakpoints[query]) {
             this.currentScreenSize.set(this.displayNameMap.get(query) ?? 'Unknown');
-            console.log(this.screenSize())
           }
         }
       });
