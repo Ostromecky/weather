@@ -1,26 +1,29 @@
 import {CallableRequest, onCall} from 'firebase-functions/v2/https';
 import * as logger from 'firebase-functions/logger';
 import {toUrl} from '../shared/utils';
-import {HttpsCallableResult} from 'firebase/functions';
 import {NotFoundError} from '../shared/error';
+import {City, CityRequest} from './typings';
 
 export const getCity = onCall({
   cors: true,
   secrets: ['GOOGLE_API_KEY'],
   region: 'europe-central2',
-}, async ({data: {latitude, longitude}}: CallableRequest<{
-  latitude: number,
-  longitude: number
-}>): Promise<HttpsCallableResult<string>> => {
-  logger.info('[GET CITY]');
+}, async ({data: {location, name}}: CallableRequest<CityRequest>): Promise<City | void> => {
   const apiKey = process.env['GOOGLE_API_KEY'] as string;
-  const url = toUrl<{
+  const url = name ? toUrl<{
+    key: string,
+    address: string
+  }>('https://maps.googleapis.com/maps/api/geocode/json', {
+    key: apiKey,
+    address: name
+  }) : toUrl<{
     key: string,
     latlng: number[]
   }>('https://maps.googleapis.com/maps/api/geocode/json', {
     key: apiKey,
-    latlng: [latitude, longitude],
+    latlng: [location?.latitude ?? 0, location?.longitude ?? 0],
   });
+  logger.info('[GET CITY]: ', url);
   return await fetch(url).then((response) => {
     if (response.ok) {
       return response.json();
@@ -29,7 +32,7 @@ export const getCity = onCall({
   })
     .then((response) => {
       logger.info('[SUCCESS]: ', response, {structuredData: true});
-      return response.results[0].address_components.find((component: any) => component.types.includes('locality')).long_name;
+      return toCity(response);
     })
     .catch((response: Response) => {
       logger.error('[ERROR]: ', response, {structuredData: true});
@@ -38,3 +41,14 @@ export const getCity = onCall({
       }
     });
 });
+
+
+const toCity = (response: any): City => {
+  return {
+    name: response.results[0].address_components.find((component: any) => component.types.includes('locality')).long_name,
+    location: {
+      latitude: response.results[0].geometry.bounds.northeast.lat,
+      longitude: response.results[0].geometry.bounds.northeast.lng
+    }
+  }
+}

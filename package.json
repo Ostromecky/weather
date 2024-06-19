@@ -1,6 +1,9 @@
 {
   "name": "weather",
   "version": "0.0.0",
+  "workspaces": [
+    "./functions/*"
+  ],
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -9,6 +12,8 @@
     "test": "ng test",
     "preserver": "ng build --configuration production",
     "deploy": "ng deploy",
+    "emulator": "firebase emulators:start --only firestore,functions",
+    "dev": "cd functions && npm run serve:watch",
     "server": "http-server -p 8080 -c-1 dist/weather/browser",
     "analyze-sourcemap": "ng build --source-map && source-map-explorer dist/weather/**/*.js"
   },

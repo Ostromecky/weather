@@ -9,6 +9,9 @@ import {provideRootToast} from "./shared/ui/toast/toast.providers";
 import {initializeApp, provideFirebaseApp} from "@angular/fire/app";
 import {environment} from "../environments/environment";
 import {connectFunctionsEmulator, getFunctions, provideFunctions} from "@angular/fire/functions";
+import {connectFirestoreEmulator, getFirestore, provideFirestore} from "@angular/fire/firestore";
+import {provideFirestoreDatabase} from "./shared/data-access/provider";
+import {provideLayoutService} from "./shared/ui/layout/provider";
 
 export const appConfig: ApplicationConfig = {
   providers: [provideRouter(routes), provideAnimationsAsync(), provideHttpClient(), provideServiceWorker('ngsw-worker.js', {
@@ -22,6 +25,18 @@ export const appConfig: ApplicationConfig = {
         connectFunctionsEmulator(getFunctions(), 'localhost', 5001);
       }
       return functions;
-    }))
+    })),
+    importProvidersFrom(provideFirestore(() => {
+      const firestore = getFirestore()
+      if (isDevMode()) {
+        connectFirestoreEmulator(firestore, 'localhost', 8080);
+      }
+
+      return firestore;
+    })),
+    // importProvidersFrom(AngularFireModule.initializeApp(environment.firebase)),
+    // importProvidersFrom(AngularFirestoreModule),
+    provideFirestoreDatabase({collection: 'cities'}),
+    provideLayoutService()
   ]
 };

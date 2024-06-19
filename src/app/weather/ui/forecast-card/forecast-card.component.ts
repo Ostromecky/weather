@@ -21,6 +21,7 @@ import {IconPipe} from "../pipes/icon.pipe";
           <mat-list>
             @for (item of forecast.list; track item.main.temp) {
               <mat-list-item>
+<!--                //TODO - remove inline styles-->
                 <span style="margin-right: 16px">Mon</span>
                 <img class="forecast-item-image" mat-card-image [ngSrc]="item.weather[0].icon | appWeatherIcon" width="24" height="24"
                      [alt]="item.weather[0].main" priority>

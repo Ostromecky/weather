@@ -3,8 +3,7 @@
     {
       "target": "weather",
       "public": "dist/weather/browser",
-      "frameworksBackend": {
-      },
+      "frameworksBackend": {},
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -42,6 +41,12 @@
       "enabled": true,
       "port": 3000
     },
-    "singleProjectMode": true
+    "singleProjectMode": true,
+    "firestore": {
+      "port": 8080
+    },
+    "hosting": {
+      "port": 5000
+    }
   }
 }
