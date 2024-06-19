@@ -28,6 +28,7 @@ export const appConfig: ApplicationConfig = {
     })),
     importProvidersFrom(provideFirestore(() => {
       const firestore = getFirestore()
+      console.log(firestore);
       if (isDevMode()) {
         connectFirestoreEmulator(firestore, 'localhost', 8080);
       }
