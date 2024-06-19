@@ -47,8 +47,8 @@ const toCity = (response: any): City => {
   return {
     name: response.results[0].address_components.find((component: any) => component.types.includes('locality')).long_name,
     location: {
-      latitude: response.results[0].geometry.bounds.northeast.lat,
-      longitude: response.results[0].geometry.bounds.northeast.lng
+      latitude: response.results[0].geometry.location.lat,
+      longitude: response.results[0].geometry.location.lng
     }
   }
 }
