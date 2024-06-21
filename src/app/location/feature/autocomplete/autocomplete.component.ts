@@ -1,6 +1,6 @@
-import {ChangeDetectionStrategy, Component, forwardRef, inject, input, viewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, forwardRef, inject, input, ViewChild} from '@angular/core';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
-import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, NgModel} from "@angular/forms";
+import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatIconModule} from "@angular/material/icon";
 import {MatInputModule} from "@angular/material/input";
@@ -10,39 +10,26 @@ import {CityService} from "../../data-access/city.service";
 import {toObservable} from "@angular/core/rxjs-interop";
 import {debounceTime, of, switchMap} from "rxjs";
 import {AsyncPipe} from "@angular/common";
+import {InputComponent} from "../../ui/input/input.component";
 
 type Option = string;
 
 @Component({
   selector: 'app-city-autocomplete',
   template: `
-    <mat-form-field subscriptSizing="dynamic" (keyup.enter)="handleSubmit()">
-      <mat-icon matPrefix>search</mat-icon>
-      <input #input matInput [placeholder]="placeholder()" [ngModel]="currentValue()"
-             (ngModelChange)="handleValueChange($event)"
-             [matAutocomplete]="auto" [disabled]="disabled()">
-    </mat-form-field>
+    <app-input class="app-input" #input [placeholder]="placeholder()" [ngModel]="currentValue()"
+               (ngModelChange)="handleValueChange($event)"
+               (keyup.enter)="handleSubmit()"
+               [matAutocomplete]="auto" [disabled]="disabled()"/>
     <mat-autocomplete #auto="matAutocomplete">
       @for (option of options$ | async; track option) {
         <mat-option (onSelectionChange)="handleSelection($event)" [value]="option.name">{{ option.name }}</mat-option>
       }
     </mat-autocomplete>
   `,
-  styles: [
-    `
-      :host {
-        --mat-form-field-trailing-icon-color: black;
-        --mat-form-field-leading-icon-color: black;
-        /*--mat-form-field-container-text-line-height: 16px;*/
-      }
-
-      .mat-mdc-form-field {
-        width: 100%;
-      }
-    `
-  ],
+  styleUrls: ['./autocomplete.component.scss'],
   standalone: true,
-  imports: [MatAutocompleteModule, FormsModule, MatFormFieldModule, MatIconModule, MatInputModule, AsyncPipe],
+  imports: [MatAutocompleteModule, FormsModule, MatFormFieldModule, MatIconModule, MatInputModule, AsyncPipe, InputComponent],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -55,11 +42,10 @@ type Option = string;
 export class AutocompleteComponent extends BaseControlValueAccessor<Option> {
   placeholder = input.required<string>();
 
-  model = viewChild.required(NgModel);
+  @ViewChild(InputComponent, {static: true})
   valueAccessor!: ControlValueAccessor;
 
   private cityService: CityService = inject(CityService);
-
 
   protected options$ = toObservable(this.currentValue).pipe(
     debounceTime(200),
@@ -71,11 +57,6 @@ export class AutocompleteComponent extends BaseControlValueAccessor<Option> {
       }
     ),
   );
-
-  override ngOnInit() {
-    this.valueAccessor = this.model().valueAccessor!;
-    super.ngOnInit();
-  }
 
   protected handleValueChange(value: Option): void {
     this.currentValue.set(value);

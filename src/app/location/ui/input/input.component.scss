@@ -1,0 +1,58 @@
+@use '@angular/material' as mat;
+
+:host {
+  $width: 100%;
+  $my-primary: mat.define-palette(mat.$indigo-palette, 500);
+  $input-color: mat.get-color-from-palette($my-primary, 200);
+  $input-border: mat.get-color-from-palette($my-primary, 50);
+  --input-color: #{$input-color};
+  --input-color-active: #{$input-border};
+
+  mat-icon {
+    color: var(--input-color);
+  }
+
+
+  .app-input-wrapper {
+    max-width: 500px;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: 0.5em;
+
+    border-bottom: 1px solid var(--input-color);
+
+    &:focus-within {
+      --input-color: var(--input-color-active);
+    }
+  }
+
+
+  .app-input {
+
+    *,
+    :before,
+    :after {
+      box-sizing: border-box;
+    }
+
+    width: $width;
+    color: var(--input-color);
+    font-size: 14px;
+
+    display: block;
+    background: inherit;
+    border: none;
+    border-radius: 0;
+    padding: 10px 10px 10px 5px;
+
+
+    &::placeholder {
+      color: var(--input-color);
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+}
