@@ -8,11 +8,12 @@ import {MatAutocomplete, MatAutocompleteModule} from "@angular/material/autocomp
 @Component({
   selector: 'app-input',
   template: `
-    <div class="app-input-wrapper">
+    <div class="app-input-wrapper" matAutocompleteOrigin #origin="matAutocompleteOrigin">
       <mat-icon matPrefix>search</mat-icon>
       <input class="app-input" #input [placeholder]="placeholder()" [ngModel]="currentValue()"
              (ngModelChange)="handleValueChange($event)"
              [matAutocomplete]="matAutocomplete()"
+             [matAutocompleteConnectedTo]="origin"
              [disabled]="disabled()">
     </div>
   `,
@@ -22,7 +23,7 @@ import {MatAutocomplete, MatAutocompleteModule} from "@angular/material/autocomp
     MatIcon,
     MatPrefix,
     FormsModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
   ],
   providers: [
     {
