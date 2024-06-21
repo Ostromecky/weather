@@ -38,7 +38,8 @@
 
     width: $width;
     color: var(--input-color);
-    font-size: 14px;
+    font-size: 16px;
+    font-family: var(--mat-toolbar-title-text-font);
 
     display: block;
     background: inherit;
