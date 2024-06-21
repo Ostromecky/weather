@@ -19,7 +19,6 @@ import {SkeletonDirective} from "../../../shared/ui/skeleton/skeleton.directive"
         </mat-card-header>
         <img mat-card-image [ngSrc]="weather.weather[0].icon | appWeatherIcon" width="250" height="250"
              [alt]="weather.weather[0].main" priority>
-
         <mat-card-content>
           <h1>{{ weather.main.temp | number: '1.0-0' }} <span [innerHTML]="celcius"></span></h1>
           <p>Pressure: {{ weather.main.pressure }} hPa</p>
@@ -43,11 +42,10 @@ import {SkeletonDirective} from "../../../shared/ui/skeleton/skeleton.directive"
                 className: 'mb-2'">
         </mat-card-subtitle>
       </mat-card-header>
-      <p mat-card-image *skeleton="true;
+      <p class="img-skeleton" mat-card-image *skeleton="true;
                 height: '250px';
-                width: '250px'
-                className: 'mb-2'">
-      </p>
+                width: '100%'
+                className: 'mb-2'"></p>
       <mat-card-content>
         <p *skeleton="true;
                 repeat: 4;
