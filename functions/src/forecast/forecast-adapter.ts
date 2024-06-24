@@ -1,5 +1,6 @@
 import {WeatherForecast, WeatherForecastItem, WeatherForecastItemServer} from './typings';
 import {WeatherInfo, WeatherMain} from '../weather/typings';
+import {fromUnixTime} from 'date-fns';
 
 export const forecastAdapter = ({list}: WeatherForecast<WeatherForecastItemServer>): WeatherForecast => {
   return {
@@ -13,7 +14,7 @@ export const forecastAdapter = ({list}: WeatherForecast<WeatherForecastItemServe
         } satisfies WeatherInfo;
       });
       return {
-        dt: item.dt,
+        date: fromUnixTime(item.dt).toISOString(),
         main,
         weather: weatherInfo
       } satisfies WeatherForecastItem;

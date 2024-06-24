@@ -8,15 +8,16 @@ export type ForecastParams = {
 }
 
 type WeatherForecastBase = {
-  dt: number;
   weather: WeatherInfo[];
 }
 
 export type WeatherForecastItemServer = WeatherForecastBase & {
+  dt: number;
   main: WeatherMainServer;
 }
 
 export type WeatherForecastItem = WeatherForecastBase & {
+  date: string;
   main: WeatherMain;
 }
 

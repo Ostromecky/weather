@@ -4,7 +4,7 @@ import {toUrl} from '../shared/utils';
 import {fetcher} from '../shared/fetcher';
 import {NotFoundError} from '../shared/error';
 import {logger} from 'firebase-functions';
-import {eachDayOfInterval, fromUnixTime, isSameDay} from 'date-fns';
+import {eachDayOfInterval, isSameDay} from 'date-fns';
 import {instanceToPlain} from 'class-transformer';
 
 export class ForecastService {
@@ -23,7 +23,6 @@ export class ForecastService {
         logger.info('[SUCCESS]: ', response, {structuredData: true});
         const forecast = instanceToPlain(forecastAdapter(response), {excludePrefixes: ['_']});
         return {
-          ...forecast,
           list: this.getMinMaxForecastList(forecast.list)
         }
       }).catch((response: Response) => {
@@ -36,14 +35,13 @@ export class ForecastService {
 
   private getMinMaxForecastList(list: WeatherForecastItem[]): WeatherForecastItem[] {
     const days: Date[] = eachDayOfInterval({
-      start: fromUnixTime(list[0].dt),
-      end: fromUnixTime(list[list.length - 1].dt)
+      start: (list[0].date),
+      end: list[list.length - 1].date
     });
 
     return days.map(day => {
       return list.filter((item) => {
-        const date = fromUnixTime(item.dt);
-        return isSameDay(day, date);
+        return isSameDay(day, item.date);
       }).reduce((acc, item) => {
         return {
           ...acc,

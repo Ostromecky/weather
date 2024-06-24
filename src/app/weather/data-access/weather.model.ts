@@ -54,7 +54,7 @@ export type ForecastParams = {
 }
 
 export type WeatherForecastItem = {
-  dt: number;
+  date: Date;
   main: WeatherMain;
   weather: WeatherInfo[];
 }

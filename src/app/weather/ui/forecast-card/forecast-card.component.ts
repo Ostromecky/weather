@@ -1,14 +1,14 @@
 import {ChangeDetectionStrategy, Component, input, InputSignal} from '@angular/core';
 import {WeatherForecast} from "../../data-access/weather.model";
 import {MatCardModule} from "@angular/material/card";
-import {DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from "@angular/common";
+import {DatePipe, DecimalPipe, NgOptimizedImage, NgTemplateOutlet} from "@angular/common";
 import {MatListModule} from "@angular/material/list";
 import {IconPipe} from "../pipes/icon.pipe";
 import {SkeletonDirective} from "../../../shared/ui/skeleton/skeleton.directive";
 
 @Component({
   selector: 'app-forecast-card',
-  imports: [MatCardModule, DecimalPipe, NgOptimizedImage, MatListModule, IconPipe, SkeletonDirective, NgTemplateOutlet],
+  imports: [MatCardModule, DecimalPipe, NgOptimizedImage, MatListModule, IconPipe, SkeletonDirective, NgTemplateOutlet, DatePipe],
   styleUrl: './forecast-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -23,7 +23,7 @@ import {SkeletonDirective} from "../../../shared/ui/skeleton/skeleton.directive"
             @for (item of forecast.list; track item.main.temp) {
               <mat-list-item>
                 <!--                //TODO - remove inline styles-->
-                <span style="margin-right: 16px">Mon</span>
+                <span style="margin-right: 16px">{{ item.date | date: 'EEE' }}</span>
                 <img class="forecast-item-image" mat-card-image [ngSrc]="item.weather[0].icon | appWeatherIcon"
                      width="24" height="24"
                      [alt]="item.weather[0].main" priority>
@@ -40,10 +40,10 @@ import {SkeletonDirective} from "../../../shared/ui/skeleton/skeleton.directive"
     </mat-card>
 
     <ng-template #loading>
-      @for (i of [1, 2, 3, 4, 5]; track i) {
+      @for (i of skeletons; track i) {
         <mat-list-item>
           <span *skeleton="true;
-                height: '24px';
+                height: '16px';
                 width: '150px';
                 "></span>
         </mat-list-item>
@@ -56,4 +56,5 @@ import {SkeletonDirective} from "../../../shared/ui/skeleton/skeleton.directive"
 export class ForecastCardComponent {
   forecast: InputSignal<WeatherForecast | undefined> = input<WeatherForecast | undefined>();
   protected celcius = '&#8451;';
+  protected skeletons = new Array(6);
 }
