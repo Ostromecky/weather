@@ -74,12 +74,16 @@ export class FireStoreService<T extends object, E extends Entity = T & Entity> {
     );
   }
 
-  findByQuery(queries: QueryConstraint[] | QueryCompositeFilterConstraint): Observable<E[]> {
+  findByQuery(query: QueryConstraint, ...queries: QueryConstraint[]): Observable<E[]>
+  findByQuery(compositeFilterConstraint: QueryCompositeFilterConstraint, ...queries: QueryConstraint[]): Observable<E[]>
+  findByQuery(queries: QueryCompositeFilterConstraint | QueryConstraint | QueryConstraint[]): Observable<E[]> {
     let q;
 
     if (Array.isArray(queries)) {
       q = query(this.collectionRef, ...queries);
 
+    } else if (queries instanceof QueryCompositeFilterConstraint) {
+      q = query(this.collectionRef, queries);
     } else {
       q = query(this.collectionRef, queries);
     }

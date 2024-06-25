@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {GeolocationService} from "./geolocation.service";
-import {filter, from, map, Observable, of, switchMap} from "rxjs";
+import {filter, from, map, Observable, of, switchMap, tap} from "rxjs";
 import {Functions, httpsCallable} from "@angular/fire/functions";
 import {FieldPath, where} from "@angular/fire/firestore";
 import {FireStoreService} from "../../shared/data-access/fire-store.service";
@@ -28,13 +28,13 @@ export class CityService {
   }
 
   searchCitiesByName(name: string): Observable<CityServer[]> {
-    return this.fireStoreService.findByQuery([where('name', '==', name)]).pipe(
+    return this.fireStoreService.findByQuery(where('name', '==', name)).pipe(
       map((cities) => cities)
     );
   }
 
   getCityByName(name: string): Observable<CityServer> {
-    return this.fireStoreService.findByQuery([where('name', '==', name)]).pipe(
+    return this.fireStoreService.findByQuery(where('name', '==', name)).pipe(
       switchMap((cities) => {
           if (cities.length === 0) {
             return this.fetchCityByName(name).pipe(
@@ -46,6 +46,7 @@ export class CityService {
                     longitude: this.roundOneDigit(city.location.longitude)
                   }
                 }).pipe(
+                  tap(console.log),
                   map((id) => this.toEntity(id, city)
                   ))
               })
@@ -61,7 +62,7 @@ export class CityService {
     longitude = this.roundOneDigit(longitude);
     const latitudePath = new FieldPath('location', 'latitude');
     const longitudePath = new FieldPath('location', 'longitude');
-    return this.fireStoreService.findByQuery([where(latitudePath, '==', latitude), where(longitudePath, '==', longitude)]).pipe(
+    return this.fireStoreService.findByQuery(where(latitudePath, '==', latitude), where(longitudePath, '==', longitude)).pipe(
       switchMap((cities) => {
         if (cities.length > 0) {
           return of(cities[0]);
@@ -76,7 +77,7 @@ export class CityService {
   }
 
   private checkCityInDatabase(city: string, latitude: number, longitude: number) {
-    return this.fireStoreService.findByQuery([where('name', '==', city)]).pipe(
+    return this.fireStoreService.findByQuery(where('name', '==', city)).pipe(
       switchMap((cities) => {
           if (cities.length === 0) {
             return this.fireStoreService.add({
@@ -127,7 +128,7 @@ export class CityService {
   private toEntity(id: string, city: City): CityServer {
     return {
       ...city,
-      id: city.name
+      id
     }
   }
 }
