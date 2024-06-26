@@ -2,9 +2,9 @@
 
 :host {
   $width: 100%;
-  $my-primary: mat.define-palette(mat.$indigo-palette, 500);
-  $input-color: mat.get-color-from-palette($my-primary, 200);
-  $input-border: mat.get-color-from-palette($my-primary, 50);
+  $my-primary: mat.m2-define-palette(mat.$m2-indigo-palette, 500);
+  $input-color: mat.m2-get-color-from-palette($my-primary, 200);
+  $input-border: mat.m2-get-color-from-palette($my-primary, 50);
   --input-color: #{$input-color};
   --input-color-active: #{$input-border};
 
