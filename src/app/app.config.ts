@@ -18,15 +18,15 @@ export const appConfig: ApplicationConfig = {
     enabled: !isDevMode(),
     registrationStrategy: 'registerWhenStable:30000'
   }), provideRootToast(),
-    importProvidersFrom(provideFirebaseApp(() => initializeApp(environment.firebase))),
-    importProvidersFrom(provideFunctions(() => {
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideFunctions(() => {
       const functions = getFunctions();
       if (isDevMode()) {
         connectFunctionsEmulator(getFunctions(), 'localhost', 5001);
       }
       return functions;
-    })),
-    importProvidersFrom(provideFirestore(() => {
+    }),
+    provideFirestore(() => {
       const app = getApp();
       const dbName = 'weather';
       if (isDevMode()) {
@@ -36,7 +36,7 @@ export const appConfig: ApplicationConfig = {
       }
       const providedFirestore = initializeFirestore(app, {}, dbName);
       return providedFirestore;
-    })),
+    }),
     provideFirestoreDatabase({collection: 'cities'}),
     provideLayoutService()
   ]
