@@ -1,12 +1,7 @@
-@use '@angular/material' as mat;
-
 :host {
   $width: 100%;
-  $my-primary: mat.m2-define-palette(mat.$m2-indigo-palette, 500);
-  $input-color: mat.m2-get-color-from-palette($my-primary, 200);
-  $input-border: mat.m2-get-color-from-palette($my-primary, 50);
-  --input-color: #{$input-color};
-  --input-color-active: #{$input-border};
+  --input-color: var(--outline);
+  --input-color-active: var(--primary);
 
   mat-icon {
     color: var(--input-color);

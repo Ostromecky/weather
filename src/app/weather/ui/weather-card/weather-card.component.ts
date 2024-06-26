@@ -20,7 +20,7 @@ import {SkeletonDirective} from "../../../shared/ui/skeleton/skeleton.directive"
         <img mat-card-image [ngSrc]="weather.weather[0].icon | appWeatherIcon" width="250" height="250"
              [alt]="weather.weather[0].main" priority>
         <mat-card-content>
-          <h1>{{ weather.main.temp | number: '1.0-0' }} <span [innerHTML]="celcius"></span></h1>
+          <h1 class="mat-headline-large">{{ weather.main.temp | number: '1.0-0' }} <span [innerHTML]="celcius"></span></h1>
           <p>Pressure: {{ weather.main.pressure }} hPa</p>
           <p>Humidity: {{ weather.main.humidity }} %</p>
           <p>Wind: {{ weather.wind.speed }} m/s</p>

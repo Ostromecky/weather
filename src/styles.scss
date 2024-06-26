@@ -1,6 +1,58 @@
 /* You can add global styles to this file, and also import other style files */
 
+@use '@angular/material' as mat;
 @import 'shared/ui/global';
 
-html, body { height: 100%; overflow: hidden; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+$theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$blue-palette,
+  ),
+  typography: (
+    brand-family: 'Roboto',
+    bold-weight: 900
+  ),
+  //density: (
+  //  scale: -1
+  //)
+));
+
+@include mat.core();
+
+:root {
+  $primary: mat.get-theme-color($theme, primary);
+  $on-primary: mat.get-theme-color($theme, on-primary);
+  $secondary: mat.get-theme-color($theme, secondary);
+  $tertiary: mat.get-theme-color($theme, tertiary);
+  $outline: mat.get-theme-color($theme, outline);
+  $outline-variant: mat.get-theme-color($theme, outline-variant);
+  $surface: mat.get-theme-color($theme, surface);
+  $on-surface: mat.get-theme-color($theme, on-surface);
+  //$neutral: mat.get-theme-color($theme, neutral);
+  //$neutral-variant: mat.get-theme-color($theme, neutral-variant);
+  $error: mat.get-theme-color($theme, error);
+
+  --primary: #{$primary};
+  --on-primary: #{$on-primary};
+  --secondary: #{$secondary};
+  --tertiary: #{$tertiary};
+  --outline: #{$outline};
+  --outline-variant: #{$outline-variant};
+  --surface: #{$surface};
+  --on-surface: #{$on-surface};
+  --error: #{$error};
+
+}
+
+html, body {
+  @include mat.core-theme($theme);
+  @include mat.all-component-themes($theme);
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  color: var(--on-surface);
+}
