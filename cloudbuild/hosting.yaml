@@ -27,6 +27,7 @@ steps:
 
   # Build
   - name: 'node:$_NODE_VERSION'
+    entrypoint: npm
     args: [ 'run', 'build' ]
     # Deploy
   - name: 'gcr.io/$PROJECT_ID/firebase'
