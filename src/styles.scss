@@ -21,22 +21,21 @@ $theme: mat.define-theme((
 
 @mixin my-toolbar-theme($theme) {
   .my-toolbar {
-    font: mat.get-theme-typography($theme, body-large, font);
-    letter-spacing: mat.get-theme-typography($theme, body-large, letter-spacing);
-    font-weight: mat.get-theme-typography($theme, body-large, font-weight);
+    font: mat.get-theme-typography($theme, title-large, font);
+    letter-spacing: mat.get-theme-typography($theme, title-large, letter-spacing);
+    line-height: mat.get-theme-typography($theme, title-large, line-height);
+    font-weight: mat.get-theme-typography($theme, title-large, font-weight);
     background: mat.get-theme-color($theme, primary, 80);
     @if mat.get-theme-type($theme) == dark {
       color: var(--primary)
     } @else {
       color: var(--primary)
     }
-    padding: 0 1em;
+    padding: 0 16px;
 
     mat-icon {
       color: var(--primary);
     }
-
-    //--mat-icon-color: var(--on-primary);
   }
 }
 
