@@ -1,14 +1,16 @@
-import {inject, Injectable} from '@angular/core';
-import {first, from, map, Observable, Subject} from "rxjs";
+import {DestroyRef, inject, Injectable} from '@angular/core';
+import {finalize, first, from, map, Observable, Subject} from "rxjs";
 import {FIRE_STORE_CONFIG, FireStoreConfig} from "./provider";
 import {
   addDoc,
   collection,
+  collectionData,
   deleteDoc,
   doc,
   Firestore,
   getDoc,
   getDocs,
+  onSnapshot,
   query,
   setDoc,
   updateDoc
@@ -16,15 +18,16 @@ import {
 import {SetOptions} from "@angular/fire/compat/firestore";
 import {QueryCompositeFilterConstraint, QueryConstraint, UpdateData} from "@firebase/firestore";
 import {Entity} from "./fire-store.model";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Injectable()
 export class FireStoreService<T extends object, E extends Entity = T & Entity> {
+  private destroyRef = inject(DestroyRef);
   private firestore: Firestore = inject(Firestore);
   private config: FireStoreConfig = inject(FIRE_STORE_CONFIG);
   private collectionRef = collection(this.firestore, this.config.collection);
 
-  // items$: Observable<T[]> = this.firestore.collection<T>(this.config.collection).valueChanges();
-  // items: Signal<T[] | undefined> = toSignal(this.items$);
+  collectionData$: Observable<T[]> = collectionData(this.collectionRef).pipe(map((data) => data as T[]));
 
   add(data: T) {
     return from(addDoc(this.collectionRef, data)).pipe(
@@ -88,5 +91,17 @@ export class FireStoreService<T extends object, E extends Entity = T & Entity> {
       q = query(this.collectionRef, queries);
     }
     return from(getDocs(q)).pipe(map(snapshot => snapshot.docs.map((doc) => ({id: doc.id, ...doc.data()} as E))));
+  }
+
+  getDocChanges(docId: string): Observable<E[]> {
+    const docRef = doc(this.collectionRef, docId);
+    const next$ = new Subject<E[]>();
+    const unsub = onSnapshot(docRef, (doc) => {
+      next$.next(doc.data() as E[]);
+    });
+    return next$.pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => unsub())
+    );
   }
 }

@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {GeolocationService} from "./geolocation.service";
-import {filter, from, map, Observable, of, switchMap, tap} from "rxjs";
+import {filter, from, map, Observable, of, switchMap} from "rxjs";
 import {Functions, httpsCallable} from "@angular/fire/functions";
 import {FieldPath, where} from "@angular/fire/firestore";
 import {FireStoreService} from "../../shared/data-access/fire-store.service";
@@ -28,13 +28,13 @@ export class CityService {
   }
 
   searchCitiesByName(name: string): Observable<CityServer[]> {
-    return this.fireStoreService.findByQuery(where('name', '==', name)).pipe(
+    return this.fireStoreService.findByQuery(where('name', '==', this.capitalizeFirstLetter(name))).pipe(
       map((cities) => cities)
     );
   }
 
   getCityByName(name: string): Observable<CityServer> {
-    return this.fireStoreService.findByQuery(where('name', '==', name)).pipe(
+    return this.fireStoreService.findByQuery(where('name', '==', this.capitalizeFirstLetter(name))).pipe(
       switchMap((cities) => {
           if (cities.length === 0) {
             return this.fetchCityByName(name).pipe(
@@ -46,7 +46,6 @@ export class CityService {
                     longitude: this.roundOneDigit(city.location.longitude)
                   }
                 }).pipe(
-                  tap(console.log),
                   map((id) => this.toEntity(id, city)
                   ))
               })
@@ -130,5 +129,9 @@ export class CityService {
       ...city,
       id
     }
+  }
+
+  capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
 }
