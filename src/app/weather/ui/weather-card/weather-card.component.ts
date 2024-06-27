@@ -11,7 +11,7 @@ import {SkeletonDirective} from "../../../shared/ui/skeleton/skeleton.directive"
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './weather-card.component.scss',
   template: `
-    <mat-card>
+    <mat-card appearance="outlined">
       @if (weather(); as weather) {
         <mat-card-header>
           <mat-card-title>{{ weather.name }}, {{ weather.sys.country }}</mat-card-title>

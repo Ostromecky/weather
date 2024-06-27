@@ -12,7 +12,7 @@ import {SkeletonDirective} from "../../../shared/ui/skeleton/skeleton.directive"
   styleUrl: './forecast-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <mat-card>
+    <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>Forecast</mat-card-title>
         <mat-card-subtitle>5 days</mat-card-subtitle>
