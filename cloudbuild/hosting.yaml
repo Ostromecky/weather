@@ -26,7 +26,7 @@ steps:
     waitFor: [ 'Installing NPM dependencies' ]
 
   # Build
-  - name: 'gcr.io/cloud-builders/npm:lts'
+  - name: 'gcr.io/cloud-builders/npm'
     args: [ 'run', 'build' ]
     # Deploy
   - name: 'gcr.io/$PROJECT_ID/firebase'
