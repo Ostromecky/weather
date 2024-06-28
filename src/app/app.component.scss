@@ -1,12 +1,9 @@
-.app-container {
-  height: 100%;
-  box-sizing: border-box;
-}
-
 .content-wrapper {
   overflow: auto;
   height: calc(100% - 56px);
   margin-top: 56px;
+  padding-bottom: 1em;
+  box-sizing: border-box;
 }
 
 mat-toolbar {

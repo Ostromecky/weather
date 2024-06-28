@@ -1,35 +1,33 @@
 @defer {
-<!--  <div class="app-container">-->
-    <mat-toolbar class="mat-elevation-z0 my-toolbar">
-      @if (layoutService.screenSize() === 'Web') {
-        <div class="toolbar-prefix">
-          <span>Weather App</span>
-          <app-city-search/>
-        </div>
+  <mat-toolbar class="mat-elevation-z0 my-toolbar">
+    @if (layoutService.screenSize() === 'Web') {
+      <div class="toolbar-prefix">
+        <span>Weather App</span>
+        <app-city-search/>
+      </div>
+      <span class="spacer"></span>
+      <button mat-icon-button>
+        <mat-icon>share</mat-icon>
+      </button>
+    } @else {
+      @if (isMobileSearchActive()) {
+        <app-city-search [ngClass]="{'full-width': isMobileSearchActive()}"/>
         <span class="spacer"></span>
-        <button mat-icon-button>
-          <mat-icon>share</mat-icon>
+        <button (click)="isMobileSearchActive.set(false)" mat-icon-button>
+          <mat-icon>close</mat-icon>
         </button>
       } @else {
-        @if (isMobileSearchActive()) {
-          <app-city-search [ngClass]="{'full-width': isMobileSearchActive()}"/>
-          <span class="spacer"></span>
-          <button (click)="isMobileSearchActive.set(false)" mat-icon-button>
-            <mat-icon>close</mat-icon>
-          </button>
-        } @else {
-          <div class="toolbar-prefix">
-            <span>Weather App</span>
-          </div>
-          <span class="spacer"></span>
-          <button (click)="isMobileSearchActive.set(true)" mat-icon-button>
-            <mat-icon>search</mat-icon>
-          </button>
-        }
+        <div class="toolbar-prefix">
+          <span>Weather App</span>
+        </div>
+        <span class="spacer"></span>
+        <button (click)="isMobileSearchActive.set(true)" mat-icon-button>
+          <mat-icon>search</mat-icon>
+        </button>
       }
-    </mat-toolbar>
-    <div class="content-wrapper">
+    }
+  </mat-toolbar>
+  <div class="content-wrapper">
     <app-weather></app-weather>
-    </div>
-<!--  </div>-->
+  </div>
 }
