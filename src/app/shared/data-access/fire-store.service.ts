@@ -78,7 +78,7 @@ export class FireStoreService<T extends object, E extends Entity = T & Entity> {
   }
 
   findByQuery(query: QueryConstraint, ...queries: QueryConstraint[]): Observable<E[]>
-  findByQuery(compositeFilterConstraint: QueryCompositeFilterConstraint, ...queries: QueryConstraint[]): Observable<E[]>
+  findByQuery(compositeFilterConstraint: QueryCompositeFilterConstraint): Observable<E[]>
   findByQuery(queries: QueryCompositeFilterConstraint | QueryConstraint | QueryConstraint[]): Observable<E[]> {
     let q;
 
@@ -88,7 +88,7 @@ export class FireStoreService<T extends object, E extends Entity = T & Entity> {
     } else if (queries instanceof QueryCompositeFilterConstraint) {
       q = query(this.collectionRef, queries);
     } else {
-      q = query(this.collectionRef, queries);
+      q = query(this.collectionRef, queries)
     }
     return from(getDocs(q)).pipe(map(snapshot => snapshot.docs.map((doc) => ({id: doc.id, ...doc.data()} as E))));
   }
@@ -98,6 +98,31 @@ export class FireStoreService<T extends object, E extends Entity = T & Entity> {
     const next$ = new Subject<E[]>();
     const unsub = onSnapshot(docRef, (doc) => {
       next$.next(doc.data() as E[]);
+    });
+    return next$.pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => unsub())
+    );
+  }
+
+  getDocChangesByQuery(query: QueryConstraint, ...queries: QueryConstraint[]): Observable<E[]>
+  getDocChangesByQuery(compositeFilterConstraint: QueryCompositeFilterConstraint): Observable<E[]>
+  getDocChangesByQuery(queries: QueryCompositeFilterConstraint | QueryConstraint | QueryConstraint[]): Observable<E[]> {
+    let q;
+    if (Array.isArray(queries)) {
+      q = query(this.collectionRef, ...queries);
+
+    } else if (queries instanceof QueryCompositeFilterConstraint) {
+      q = query(this.collectionRef, queries);
+    } else {
+      q = query(this.collectionRef, queries)
+    }
+
+    const next$ = new Subject<E[]>();
+    const unsub = onSnapshot(q, {
+      next: (snapshot) => {
+        next$.next(snapshot.docs.map((doc) => ({id: doc.id, ...doc.data()} as E)));
+      }
     });
     return next$.pipe(
       takeUntilDestroyed(this.destroyRef),

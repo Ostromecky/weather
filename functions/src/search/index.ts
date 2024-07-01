@@ -1,8 +1,8 @@
-import {firestore} from 'firebase-functions';
+import {firestore, config} from 'firebase-functions';
 import algoliasearch from 'algoliasearch';
 
-const appId = process.env['APP_ID'] ?? '';
-const apiKey = process.env['firestore-algolia-search-ALGOLIA_API_KEY'] ?? '';
+const appId = config().algolia.app
+const apiKey = config().algolia.key;
 
 const client = algoliasearch(appId, apiKey);
 const index = client.initIndex('cities');
