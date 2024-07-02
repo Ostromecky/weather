@@ -2,7 +2,7 @@ import {computed, inject, Injectable, Signal, signal} from '@angular/core';
 import {CityService} from "./city.service";
 import {injectQueryParams} from "ngxtension/inject-query-params";
 import {toObservable} from "@angular/core/rxjs-interop";
-import {concat, first, share, Subject, switchMap} from "rxjs";
+import {concat, first, share, Subject, switchMap, takeUntil} from "rxjs";
 import {connect} from "ngxtension/connect";
 import {CityState} from "./city.model";
 
@@ -21,14 +21,15 @@ export class CitySearchService {
   city = computed(() => this.state());
 
   constructor() {
-    // console.log(this.q()['cities[query]']);
     const initCity$ = toObservable(this.query).pipe(
       switchMap((value) =>
         this.cityService.initCity(value ? value : undefined)
       ),
       first()
     );
-    const city$ = concat(initCity$, this.searchByName()).pipe(share());
+    const city$ = concat(initCity$.pipe(
+      takeUntil(this.search$)
+    ), this.searchByName()).pipe(share());
 
     connect<CityState | undefined>(this.state).with(
       city$,
