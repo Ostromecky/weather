@@ -28,14 +28,12 @@ export const appConfig: ApplicationConfig = {
     }),
     provideFirestore(() => {
       const app = getApp();
-      const dbName = 'weather';
       if (isDevMode()) {
       const firestore = getFirestore(app)
         connectFirestoreEmulator(firestore, 'localhost', 8080);
       return firestore;
       }
-      const providedFirestore = initializeFirestore(app, {}, dbName);
-      return providedFirestore;
+      return initializeFirestore(app, {});
     }),
     provideFirestoreDatabase({collection: 'cities'}),
     provideLayoutService()
