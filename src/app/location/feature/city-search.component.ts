@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, computed, inject, model} from '@angular/core';
-import {AutocompleteComponent} from "./autocomplete/autocomplete.component";
 import {FormsModule} from "@angular/forms";
 import {CitySearchService} from "../data-access/city-search.service";
 import {SearchComponent} from "../../shared/search/search.component";
@@ -11,7 +10,6 @@ import {SearchComponent} from "../../shared/search/search.component";
   `,
   standalone: true,
   imports: [
-    AutocompleteComponent,
     FormsModule,
     SearchComponent
   ],
