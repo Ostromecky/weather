@@ -8,7 +8,7 @@ import {CityState} from "./city.model";
 
 @Injectable({providedIn: 'root'})
 export class CitySearchService {
-  private query: Signal<string | null> = injectQueryParams('city');
+  private query: Signal<string | null> = injectQueryParams('cities[query]');
   private cityService: CityService = inject(CityService);
 
   //state
@@ -21,6 +21,7 @@ export class CitySearchService {
   city = computed(() => this.state());
 
   constructor() {
+    // console.log(this.q()['cities[query]']);
     const initCity$ = toObservable(this.query).pipe(
       switchMap((value) =>
         this.cityService.initCity(value ? value : undefined)

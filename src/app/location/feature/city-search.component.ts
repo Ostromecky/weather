@@ -2,16 +2,18 @@ import {ChangeDetectionStrategy, Component, computed, inject, model} from '@angu
 import {AutocompleteComponent} from "./autocomplete/autocomplete.component";
 import {FormsModule} from "@angular/forms";
 import {CitySearchService} from "../data-access/city-search.service";
+import {SearchComponent} from "../../shared/search/search.component";
 
 @Component({
   selector: 'app-city-search',
   template: `
-    <app-city-autocomplete [placeholder]="placeholder()" [ngModel]="cityName()" (ngModelChange)="handleCityChange($event)"></app-city-autocomplete>
+    <app-search [placeholder]="placeholder()" [ngModel]="cityName()" (ngModelChange)="handleCityChange($event)"></app-search>
   `,
   standalone: true,
   imports: [
     AutocompleteComponent,
-    FormsModule
+    FormsModule,
+    SearchComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

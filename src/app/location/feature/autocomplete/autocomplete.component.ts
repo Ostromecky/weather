@@ -10,7 +10,7 @@ import {CityService} from "../../data-access/city.service";
 import {toObservable} from "@angular/core/rxjs-interop";
 import {debounceTime, of, switchMap} from "rxjs";
 import {AsyncPipe} from "@angular/common";
-import {InputComponent} from "../../ui/input/input.component";
+import {InputComponent} from "../../../shared/ui/input/input.component";
 
 type Option = string;
 

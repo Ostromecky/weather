@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, forwardRef, input, InputSignal, view
 import {MatIcon} from "@angular/material/icon";
 import {MatPrefix} from "@angular/material/form-field";
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, NgModel} from "@angular/forms";
-import {BaseControlValueAccessor} from "../../../shared/utils/base-control-value-accessor.directive";
+import {BaseControlValueAccessor} from "../../utils/base-control-value-accessor.directive";
 import {MatAutocomplete, MatAutocompleteModule} from "@angular/material/autocomplete";
 
 @Component({
