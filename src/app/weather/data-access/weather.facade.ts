@@ -1,18 +1,16 @@
-import {computed, inject, Injectable, signal} from '@angular/core';
-import {WeatherService} from "./weather.service";
-import {catchError, filter, map, Observable, share, Subject, switchMap} from "rxjs";
-import {connect} from "ngxtension/connect";
-import {injectQueryParams} from "ngxtension/inject-query-params";
-import {Weather, WeatherForecast, WeatherState} from "./weather.model";
-import {ToastService} from "../../shared/ui/toast/toast.model";
-import {CitySearchService} from "../../location/data-access/city-search.service";
-import {toObservable} from "@angular/core/rxjs-interop";
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { WeatherService } from "./weather.service";
+import { catchError, filter, map, Observable, share, switchMap } from "rxjs";
+import { connect } from "ngxtension/connect";
+import { Weather, WeatherForecast, WeatherState } from "./weather.model";
+import { ToastService } from "../../shared/ui/toast/toast.model";
+import { CitySearchService } from "../../location/data-access/city-search.service";
+import { toObservable } from "@angular/core/rxjs-interop";
 
 @Injectable()
 export class WeatherFacade {
   private weatherService: WeatherService = inject(WeatherService);
   private citySearchStateService: CitySearchService = inject(CitySearchService);
-  private query = injectQueryParams('city');
   private toastService = inject(ToastService);
 
   //state
@@ -26,11 +24,10 @@ export class WeatherFacade {
   forecast = computed(() => this.state().forecast);
 
   //sources
-  search$ = new Subject<string>();
+  city$ = this.citySearchStateService.city;
 
   constructor() {
-    const city$ = this.citySearchStateService.city;
-    const city$$ = toObservable(city$).pipe(share());
+    const city$$ = toObservable(this.city$).pipe(share());
     const nextWeather$ = city$$.pipe(
       filter(Boolean),
       switchMap(city => this.getWeather(city.name).pipe(

@@ -2,7 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {GeolocationService} from "./geolocation.service";
 import {filter, from, map, Observable, of, switchMap} from "rxjs";
 import {Functions, httpsCallable} from "@angular/fire/functions";
-import {FieldPath, where} from "@angular/fire/firestore";
+import { FieldPath, or, where } from "@angular/fire/firestore";
 import {FireStoreService} from "../../shared/data-access/fire-store.service";
 import {City, CityServer} from "./city.model";
 
@@ -28,13 +28,13 @@ export class CityService {
   }
 
   searchCitiesByName(name: string): Observable<CityServer[]> {
-    return this.fireStoreService.findByQuery(where('name', '==', this.capitalizeFirstLetter(name))).pipe(
+    return this.fireStoreService.findByQuery(cityQuery(name)).pipe(
       map((cities) => cities)
     );
   }
 
   getCityByName(name: string): Observable<CityServer> {
-    return this.fireStoreService.findByQuery(where('name', '==', this.capitalizeFirstLetter(name))).pipe(
+    return this.fireStoreService.findByQuery(cityQuery(name)).pipe(
       switchMap((cities) => {
           if (cities.length === 0) {
             return this.fetchCityByName(name).pipe(
@@ -45,9 +45,7 @@ export class CityService {
                     latitude: this.roundOneDigit(city.location.latitude),
                     longitude: this.roundOneDigit(city.location.longitude)
                   }
-                }).pipe(
-                  map((id) => this.toEntity(id, city)
-                  ))
+                })
               })
             )
           }
@@ -76,7 +74,7 @@ export class CityService {
   }
 
   private checkCityInDatabase(city: string, latitude: number, longitude: number) {
-    return this.fireStoreService.findByQuery(where('name', '==', city)).pipe(
+    return this.fireStoreService.findByQuery(cityQuery(city)).pipe(
       switchMap((cities) => {
           if (cities.length === 0) {
             return this.fireStoreService.add({
@@ -131,7 +129,12 @@ export class CityService {
     }
   }
 
-  capitalizeFirstLetter(string: string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
+
 }
+
+const capitalizeFirstLetter = (string: string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+const cityQuery = (cityName: string) =>  or(where('name', '==', capitalizeFirstLetter(cityName)), where('name', '==', cityName))
+
