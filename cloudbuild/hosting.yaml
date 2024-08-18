@@ -32,5 +32,6 @@ steps:
     # Deploy
   - name: 'gcr.io/$PROJECT_ID/firebase'
     args: [ 'deploy', '--only=hosting' ]
-  options:
-    machineType: 'N1_HIGHCPU_8'
+  
+options:
+  machineType: 'N1_HIGHCPU_8'
