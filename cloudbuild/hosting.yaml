@@ -15,6 +15,7 @@ steps:
       - install
       - --prefer-offline
       - --cache=.npm
+      - --production
 
   - name: 'gcr.io/$PROJECT_ID/save_cache'
     id: 'Saving .npm cache'
