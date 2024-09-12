@@ -15,7 +15,7 @@
     "emulator": "firebase emulators:start --only firestore,functions",
     "dev": "cd functions && npm run serve:watch",
     "server": "http-server -p 8080 -c-1 dist/weather/browser",
-    "analyze-sourcemap": "ng build --source-map && source-map-explorer dist/weather/**/*.js"
+    "analyze-sourcemap": "ng build --configuration=analyze-bundle && source-map-explorer dist/weather/**/*.js"
   },
   "private": true,
   "dependencies": {
@@ -34,7 +34,7 @@
     "@ngneat/until-destroy": "^10.0.0",
     "algoliasearch": "^4.24.0",
     "date-fns": "^3.6.0",
-    "firebase": "^10.11.1",
+    "firebase": "^10.13.1",
     "instantsearch.js": "^4.73.0",
     "ngxtension": "^3.0.1",
     "rxjs": "~7.8.0",
