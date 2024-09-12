@@ -62,10 +62,20 @@
               "outputHashing": "all",
               "serviceWorker": "ngsw-config.json"
             },
+            "analyze-bundle": {
+              "sourceMap": true,
+              "namedChunks": true,
+              "outputHashing": "none",
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": {
+                "hidden": false,
+                "scripts": true,
+                "vendor": true,
+                "styles": false
+              }
             }
           },
           "defaultConfiguration": "production"

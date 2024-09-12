@@ -1,16 +1,16 @@
-import {inject, Injectable} from '@angular/core';
-import {GeolocationService} from "./geolocation.service";
-import {filter, from, map, Observable, of, switchMap} from "rxjs";
-import {Functions, httpsCallable} from "@angular/fire/functions";
+import { inject, Injectable } from '@angular/core';
+import { GeolocationService } from "./geolocation.service";
+import { filter, from, map, Observable, of, switchMap } from "rxjs";
+import { Functions, httpsCallable } from "@angular/fire/functions";
 import { FieldPath, or, where } from "@angular/fire/firestore";
-import {FireStoreService} from "../../shared/data-access/fire-store.service";
-import {City, CityServer} from "./city.model";
+import { City, CityServer } from "./city.model";
+import { CityFiresStoreService } from './city-fires-store.service';
 
 @Injectable({providedIn: 'root'})
 export class CityService {
   private geoLocation: GeolocationService = inject(GeolocationService);
   private functions: Functions = inject(Functions);
-  private fireStoreService: FireStoreService<City> = inject(FireStoreService);
+  private fireStoreService: CityFiresStoreService = inject(CityFiresStoreService);
 
   constructor() {
     this.functions.region = 'europe-central2';
@@ -128,8 +128,6 @@ export class CityService {
       id
     }
   }
-
-
 }
 
 const capitalizeFirstLetter = (string: string) => {

@@ -1,0 +1,33 @@
+.content-wrapper {
+  overflow: auto;
+  height: calc(100% - 56px);
+  margin-top: 56px;
+  padding-bottom: 1em;
+  box-sizing: border-box;
+}
+
+mat-toolbar {
+  position: fixed;
+  top: 0;
+  z-index: 1;
+}
+
+.toolbar-prefix {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1em;
+  flex-grow: 1;
+}
+
+app-city-search {
+  width: 100%;
+
+  &.full-width {
+    flex: 100%;
+  }
+}
+
+.spacer {
+  flex: 1 1 auto;
+}

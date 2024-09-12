@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
-import {WeatherFacade} from "../data-access/weather.facade";
-import {MatIcon} from "@angular/material/icon";
-import {WeatherCardComponent} from "../ui/weather-card/weather-card.component";
-import {ForecastCardComponent} from "../ui/forecast-card/forecast-card.component";
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { WeatherFacade } from "../data-access/weather.facade";
+import { MatIcon } from "@angular/material/icon";
+import { WeatherCardComponent } from "../ui/weather-card/weather-card.component";
+import { ForecastCardComponent } from "../ui/forecast-card/forecast-card.component";
 
 @Component({
   selector: 'app-weather',
