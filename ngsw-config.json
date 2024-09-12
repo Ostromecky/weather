@@ -31,7 +31,7 @@
     {
       "name": "weather-api-icons",
       "urls": [
-        "https://api.openweathermap.org/img/**"
+        "https://openweathermap.org/img/**"
       ],
       "cacheConfig": {
         "maxSize": 20,
