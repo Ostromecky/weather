@@ -13,7 +13,7 @@ export class WeatherFacade {
   private citySearchStateService: CitySearchService = inject(CitySearchService);
   private toastService = inject(ToastService);
 
-  //state
+  // state
   private state = signal<WeatherState>({
     weather: undefined,
     forecast: undefined
@@ -23,7 +23,7 @@ export class WeatherFacade {
   weather = computed(() => this.state().weather);
   forecast = computed(() => this.state().forecast);
 
-  //sources
+  // sources
   city$ = this.citySearchStateService.city;
 
   constructor() {
@@ -41,6 +41,8 @@ export class WeatherFacade {
       switchMap(city => this.getWeatherForecast(city.location.latitude, city.location.longitude))
     );
 
+
+    // reducers
     connect<WeatherState>(this.state)
       .with(nextWeather$, (state, weather) => ({
         ...state,

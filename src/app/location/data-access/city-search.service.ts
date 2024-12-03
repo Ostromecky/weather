@@ -31,6 +31,7 @@ export class CitySearchService {
       takeUntil(this.search$)
     ), this.searchByName()).pipe(share());
 
+    // Reducer
     connect<CityState | undefined>(this.state).with(
       city$,
       (state, city) => ({

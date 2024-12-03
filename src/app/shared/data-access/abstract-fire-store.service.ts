@@ -32,7 +32,9 @@ export abstract class AbstractFireStoreService<T extends object, E extends Entit
   constructor(private config: FireStoreConfig) {
   }
 
-  collectionData$: Observable<T[]> = collectionData(this.collectionRef).pipe(map((data) => data as T[]));
+  collectionData$: Observable<E[]> = collectionData(this.collectionRef, {idField: 'id'}).pipe(
+    map((data) => data.map(item => ({...item})) as E[])
+  );
 
   add(data: T): Observable<E> {
     return from(addDoc(this.collectionRef, {
