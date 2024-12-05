@@ -17,10 +17,6 @@
     "server": "http-server -p 8080 -c-1 dist/weather/browser",
     "analyze-sourcemap": "ng build --configuration=analyze-bundle && source-map-explorer dist/weather/**/*.js"
   },
-  "engines": {
-    "node": ">=18",
-    "pnpm": ">=8"
-  },
   "private": true,
   "dependencies": {
     "@angular/animations": "^18.0.4",
@@ -59,6 +55,5 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.4.2"
-  },
-  "packageManager": "pnpm@9.3.0"
+  }
 }

@@ -4,33 +4,34 @@ steps:
     id: 'Restoring NPM modules cache'
     args:
       - --bucket=gs://${PROJECT_ID}_cloudbuild
-      - --key=npm-build-cache-$( checksum pnmp-lock.yaml )
+      - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
       - --key_fallback=npm-build-cache-
-      - --path=node_modules
 
   - name: 'node:$_NODE_VERSION'
-    entrypoint: pnpm
+    entrypoint: npm
     id: 'Installing NPM dependencies'
     args:
+      - ci
       - install
-      - --frozen-lockfile
+      - --prefer-offline
+      - --cache=.npm
 
   - name: 'gcr.io/$PROJECT_ID/save_cache'
     id: 'Saving .npm cache'
     args:
       - --bucket=gs://${PROJECT_ID}_cloudbuild
-      - --key=npm-build-cache-$( checksum pnmp-lock.yaml )
-      - --path=node_modules
+      - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
+      - --path=.npm
       - --no-clobber
     waitFor: [ 'Installing NPM dependencies' ]
 
   # Build
   - name: 'node:$_NODE_VERSION'
-    entrypoint: pnpm
+    entrypoint: npm
     args: [ 'run', 'build' ]
     # Deploy
   - name: 'gcr.io/$PROJECT_ID/firebase'
     args: [ 'deploy', '--only=hosting' ]
-
+  
 options:
   machineType: 'N1_HIGHCPU_8'
