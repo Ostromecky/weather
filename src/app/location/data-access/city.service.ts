@@ -38,14 +38,17 @@ export class CityService {
       switchMap((cities) => {
           if (cities.length === 0) {
             return this.fetchCityByName(name).pipe(
+              filter(Boolean),
               switchMap((city) => {
-                return this.fireStoreService.add({
-                  name: city.name,
-                  location: {
-                    latitude: this.roundOneDigit(city.location.latitude),
-                    longitude: this.roundOneDigit(city.location.longitude)
-                  }
-                })
+                console.log(city);
+                // return this.fireStoreService.add({
+                //   name: city.name,
+                //   location: {
+                //     latitude: this.roundOneDigit(city.location.latitude),
+                //     longitude: this.roundOneDigit(city.location.longitude)
+                //   }
+                // })
+                return this.checkCityInDatabase(city.name, this.roundOneDigit(city.location.latitude), this.roundOneDigit(city.location.longitude))
               })
             )
           }
@@ -105,7 +108,7 @@ export class CityService {
     );
   }
 
-  private fetchCityByName(name: string): Observable<City> {
+  private fetchCityByName(name: string): Observable<City | null> {
     const callable = from(httpsCallable<{
       location?: { latitude: number, longitude: number },
       name: string
@@ -134,5 +137,5 @@ const capitalizeFirstLetter = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const cityQuery = (cityName: string) =>  or(where('name', '==', capitalizeFirstLetter(cityName)), where('name', '==', cityName))
+const cityQuery = (cityName: string) => or(where('name', '==', capitalizeFirstLetter(cityName)), where('name', '==', cityName))
 
