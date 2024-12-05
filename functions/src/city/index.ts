@@ -1,8 +1,8 @@
-import {CallableRequest, onCall} from 'firebase-functions/v2/https';
+import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 import * as logger from 'firebase-functions/logger';
-import {toUrl} from '../shared/utils';
-import {NotFoundError} from '../shared/error';
-import {City, CityRequest} from './typings';
+import { toUrl } from '../shared/utils';
+import { NotFoundError } from '../shared/error';
+import { City, CityRequest } from './typings';
 
 export const getCity = onCall({
   cors: true,
