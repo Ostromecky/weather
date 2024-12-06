@@ -25,7 +25,7 @@ steps:
       - --no-audit
       - --cache=.npm
 
-  - id: 'upload-cached-node-dependencies'
+  - id: 'download-cached-node-dependencies'
     waitFor: [ 'install-dependencies-and-build' ]
     name: gcr.io/cloud-builders/gsutil
     entrypoint: bash
