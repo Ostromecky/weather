@@ -1,11 +1,20 @@
 steps:
   # Install
-#  - name: 'gcr.io/$PROJECT_ID/restore_cache'
-#    id: 'Restoring NPM modules cache'
-#    args:
-#      - --bucket=gs://${PROJECT_ID}_cloudbuild
-#      - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
-#      - --key_fallback=npm-build-cache-
+  #  - name: 'gcr.io/$PROJECT_ID/restore_cache'
+  #    id: 'Restoring NPM modules cache'
+  #    args:
+  #      - --bucket=gs://${PROJECT_ID}_cloudbuild
+  #      - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
+  #      - --key_fallback=npm-build-cache-
+  # Step 1: Download cached Node.js dependencies
+  - id: 'download-cached-node-dependencies'
+    name: gcr.io/cloud-builders/gsutil
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        gsutil cp gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz node-modules.tgz || exit 0
+        tar -zxf node-modules.tgz --directory /workspace || exit 0
 
   - name: 'node:$_NODE_VERSION'
     entrypoint: npm
@@ -16,14 +25,25 @@ steps:
       - --no-audit
       - --cache=.npm
 
-#  - name: 'gcr.io/$PROJECT_ID/save_cache'
-#    id: 'Saving .npm cache'
-#    args:
-#      - --bucket=gs://${PROJECT_ID}_cloudbuild
-#      - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
-#      - --path=.npm
-#      - --no-clobber
-#    waitFor: [ 'Installing NPM dependencies' ]
+  - id: 'upload-cached-node-dependencies'
+    waitFor: [ 'install-dependencies-and-build' ]
+    name: gcr.io/cloud-builders/gsutil
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        tar -zcf node-modules.tgz ./node_modules
+        gsutil cp node-modules.tgz gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz
+
+
+  #  - name: 'gcr.io/$PROJECT_ID/save_cache'
+  #    id: 'Saving .npm cache'
+  #    args:
+  #      - --bucket=gs://${PROJECT_ID}_cloudbuild
+  #      - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
+  #      - --path=.npm
+  #      - --no-clobber
+  #    waitFor: [ 'Installing NPM dependencies' ]
 
   # Build
   - name: 'node:$_NODE_VERSION'
