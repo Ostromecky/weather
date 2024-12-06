@@ -7,7 +7,7 @@ steps:
   #      - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
   #      - --key_fallback=npm-build-cache-
   # Step 1: Download cached Node.js dependencies
-  - id: 'download-cached-node-dependencies'
+  - id: 'Restoring NPM modules cache'
     name: gcr.io/cloud-builders/gsutil
     entrypoint: bash
     args:
@@ -25,8 +25,8 @@ steps:
       - --no-audit
       - --cache=.npm
 
-  - id: 'download-cached-node-dependencies'
-    waitFor: [ 'install-dependencies-and-build' ]
+  - id: 'Saving .npm cache'
+    waitFor: [ 'Installing NPM dependencies' ]
     name: gcr.io/cloud-builders/gsutil
     entrypoint: bash
     args:
