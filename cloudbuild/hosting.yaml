@@ -61,7 +61,7 @@ steps:
     args:
       - '-c'
       - |
-        echo "Extracted Package lock changed " $(cat /workspace/check.txt)
+        echo "Extracted Package lock changed " $(cat $_PACKAGE_LOCK_CHANGED)
         if [ "$_PACKAGE_LOCK_CHANGED" == "true" ]; then
           npm ci --no-audit
         fi
