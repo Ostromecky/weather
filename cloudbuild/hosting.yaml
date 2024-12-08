@@ -1,12 +1,28 @@
+options:
+  machineType: 'N1_HIGHCPU_8'
+
 steps:
-  # Install
-  #  - name: 'gcr.io/$PROJECT_ID/restore_cache'
-  #    id: 'Restoring NPM modules cache'
-  #    args:
-  #      - --bucket=gs://${PROJECT_ID}_cloudbuild
-  #      - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
-  #      - --key_fallback=npm-build-cache-
-  # Step 1: Download cached Node.js dependencies
+  # Step 1: Check if package-lock.json changed
+  - id: 'Check for package-lock changes'
+    name: 'alpine:latest'
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        if git diff --quiet HEAD~1 HEAD -- package-lock.json; then
+          echo "_PACKAGE_LOCK_CHANGED=false" >> /workspace/env.txt
+        else
+          echo "_PACKAGE_LOCK_CHANGED=true" >> /workspace/env.txt
+
+  # Step 2: Load environment variables
+  - id: 'Load environment variables'
+    name: 'alpine:latest'
+    entrypoint: sh
+    args:
+      - '-c'
+      - 'source /workspace/env.txt && env'
+
+  # Step 3: Restore deps
   - id: 'Restoring NPM modules cache'
     name: gcr.io/cloud-builders/gsutil
     entrypoint: bash
@@ -15,15 +31,18 @@ steps:
       - |
         gsutil cp gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz node-modules.tgz || exit 0
         tar -zxf node-modules.tgz --directory /workspace || exit 0
+    when:
+      condition: '"$_PACKAGE_LOCK_CHANGED" == "false"'
 
+  # Step 4: Install deps
   - name: 'node:$_NODE_VERSION'
     entrypoint: npm
     id: 'Installing NPM dependencies'
     args:
       - ci
-      - --prefer-offline
       - --no-audit
-      - --cache=.npm
+    when:
+      condition: '"$_PACKAGE_LOCK_CHANGED" == "true"'
 
   - id: 'Saving .npm cache'
     waitFor: [ 'Installing NPM dependencies' ]
@@ -34,24 +53,14 @@ steps:
       - |
         tar -zcf node-modules.tgz ./node_modules
         gsutil cp node-modules.tgz gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz
+    when:
+      condition: '"$_PACKAGE_LOCK_CHANGED" == "true"'
 
-
-  #  - name: 'gcr.io/$PROJECT_ID/save_cache'
-  #    id: 'Saving .npm cache'
-  #    args:
-  #      - --bucket=gs://${PROJECT_ID}_cloudbuild
-  #      - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
-  #      - --path=.npm
-  #      - --no-clobber
-  #    waitFor: [ 'Installing NPM dependencies' ]
-
-  # Build
+  # Step 5: Build
   - name: 'node:$_NODE_VERSION'
     entrypoint: npm
     args: [ 'run', 'build' ]
-    # Deploy
+
+    # Step 6: Deploy
   - name: 'gcr.io/$PROJECT_ID/firebase'
     args: [ 'deploy', '--only=hosting' ]
-
-options:
-  machineType: 'N1_HIGHCPU_8'
