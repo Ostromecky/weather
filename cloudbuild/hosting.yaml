@@ -9,16 +9,17 @@ steps:
     args:
       - '-c'
       - |
-        if gsutil stat gs://${PROJECT_ID}-cache-dependencies/package-lock.json; then
-          gsutil cp gs://${PROJECT_ID}-cache-dependencies/package-lock.json old-package-lock.json
-          if cmp -s package-lock.json old-package-lock.json; then
-            echo "_PACKAGE_LOCK_CHANGED=false" >> /workspace/env.txt
-          else
-            echo "_PACKAGE_LOCK_CHANGED=true" >> /workspace/env.txt
-          fi
-        else
-          echo "_PACKAGE_LOCK_CHANGED=true" >> /workspace/env.txt
-        fi
+        "_PACKAGE_LOCK_CHANGED=true" > /workspace/env.txt
+#        if gsutil stat gs://${PROJECT_ID}-cache-dependencies/package-lock.json; then
+#          gsutil cp gs://${PROJECT_ID}-cache-dependencies/package-lock.json old-package-lock.json
+#          if cmp -s package-lock.json old-package-lock.json; then
+#            echo "_PACKAGE_LOCK_CHANGED=false" >> /workspace/env.txt
+#          else
+#            echo "_PACKAGE_LOCK_CHANGED=true" >> /workspace/env.txt
+#          fi
+#        else
+#          echo "_PACKAGE_LOCK_CHANGED=true" >> /workspace/env.txt
+#        fi
 
 
   # Step 2: Load environment variables
