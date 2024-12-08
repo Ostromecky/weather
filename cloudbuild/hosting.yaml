@@ -31,8 +31,8 @@ steps:
     args:
       - '-c'
       - |
-        gsutil cp gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz node-modules.tgz || exit 0
-        tar -zxf node-modules.tgz --directory /root/.npm || echo "No cache found"
+        gsutil cp gs://${PROJECT_ID}-npm-cache/npm-cache.tgz npm-cache.tgz || exit 0
+        tar -zxf npm-cache.tgz --C /root/.npm || echo "No cache found"
     volumes:
       - name: 'npm-cache'
         path: /root/.npm
@@ -41,7 +41,7 @@ steps:
     name: 'node:$_NODE_VERSION'
     entrypoint: npm
     args:
-      - ci
+      - npm ci --prefer-offline --cache /root/.npm
     volumes:
         - name: 'npm-cache'
           path: /root/.npm
@@ -56,18 +56,35 @@ steps:
 #        tar -zcf node-modules.tgz ./node_modules
 #        gsutil cp node-modules.tgz gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz
 
-  - id: 'Saving .npm cache'
+#  - id: 'Saving .npm cache'
+#    waitFor: [ 'Installing NPM dependencies' ]
+#    name: gcr.io/cloud-builders/gsutil
+#    entrypoint: bash
+#    args:
+#      - '-c'
+#      - |
+#        if [ "$(cat /workspace/check.txt)" == "true" ]; then
+#          tar -zcf node-modules.tgz ./node_modules
+#          gsutil cp node-modules.tgz gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz
+#          gsutil cp package-lock.json gs://${PROJECT_ID}-cache-dependencies/package-lock.json
+#        fi
+
+  - id: 'Save npm cache'
+    name: 'gcr.io/cloud-builders/gsutil'
     waitFor: [ 'Installing NPM dependencies' ]
-    name: gcr.io/cloud-builders/gsutil
     entrypoint: bash
     args:
       - '-c'
       - |
         if [ "$(cat /workspace/check.txt)" == "true" ]; then
-          tar -zcf node-modules.tgz ./node_modules
-          gsutil cp node-modules.tgz gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz
+          tar -zcf npm-cache.tgz -C /root/.npm .
+          gsutil cp npm-cache.tgz gs://${PROJECT_ID}-npm-cache/npm-cache.tgz
           gsutil cp package-lock.json gs://${PROJECT_ID}-cache-dependencies/package-lock.json
         fi
+    volumes:
+      - name: 'npm-cache'
+        path: /root/.npm
+
 
 
 
