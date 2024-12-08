@@ -29,20 +29,31 @@ steps:
     args:
       - '-c'
       - |
-        gsutil cp gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz node-modules.tgz || exit 0
-        tar -zxf node-modules.tgz --directory /workspace || exit 0
-    when:
-      condition: '"$_PACKAGE_LOCK_CHANGED" == "false"'
+        if [ "$_PACKAGE_LOCK_CHANGED" == "false" ]; then
+          gsutil cp gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz node-modules.tgz || exit 0
+          tar -zxf node-modules.tgz --directory /workspace || exit 0
+        fi
 
   # Step 4: Install deps
-  - name: 'node:$_NODE_VERSION'
-    entrypoint: npm
+#  - name: 'node:$_NODE_VERSION'
+#    entrypoint: npm
+#    id: 'Installing NPM dependencies'
+#    args:
+#      - ci
+#      - --no-audit
+##    when:
+##      condition: '"$_PACKAGE_LOCK_CHANGED" == "true"'
+
+  # Step 4: Install deps
+  - name: 'alpine:latest'
+    entrypoint: sh
     id: 'Installing NPM dependencies'
     args:
-      - ci
-      - --no-audit
-    when:
-      condition: '"$_PACKAGE_LOCK_CHANGED" == "true"'
+      - '-c'
+      - |
+        if [ "$_PACKAGE_LOCK_CHANGED" == "true" ]; then
+          npm ci --no-audit
+        fi
 
   - id: 'Saving .npm cache'
     waitFor: [ 'Installing NPM dependencies' ]
@@ -51,10 +62,10 @@ steps:
     args:
       - '-c'
       - |
-        tar -zcf node-modules.tgz ./node_modules
-        gsutil cp node-modules.tgz gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz
-    when:
-      condition: '"$_PACKAGE_LOCK_CHANGED" == "true"'
+        if [ "$_PACKAGE_LOCK_CHANGED" == "true" ]; then
+          tar -zcf node-modules.tgz ./node_modules
+          gsutil cp node-modules.tgz gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz
+        fi
 
   # Step 5: Build
   - name: 'node:$_NODE_VERSION'
