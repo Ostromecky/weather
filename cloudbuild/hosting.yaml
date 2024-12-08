@@ -39,7 +39,6 @@ steps:
     args:
       - '-c'
       - |
-        echo "Package lock changed " $PACKAGE_LOCK_CHANGED
         if [ "$_PACKAGE_LOCK_CHANGED" == "false" ]; then
           gsutil cp gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz node-modules.tgz || exit 0
           tar -zxf node-modules.tgz --directory /workspace || exit 0
@@ -75,7 +74,6 @@ steps:
     args:
       - '-c'
       - |
-        $_PACKAGE_LOCK_CHANGED=$(cat /workspace/check.txt)
         if [ "$_PACKAGE_LOCK_CHANGED" == "true" ]; then
           tar -zcf node-modules.tgz ./node_modules
           gsutil cp node-modules.tgz gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz
