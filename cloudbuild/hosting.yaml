@@ -39,23 +39,11 @@ steps:
     args:
       - '-c'
       - |
+        if [ "$(cat /workspace/check.txt)" == "true" ]; then
           tar -zcf node-modules.tgz ./node_modules
           gsutil cp node_modules gs://${PROJECT_ID}-cache-dependencies/node_modules.tgz
           gsutil cp package-lock.json gs://${PROJECT_ID}-cache-dependencies/package-lock.json
-#        if [ "$(cat /workspace/check.txt)" == "true" ]; then
-#        fi
-
-
-
-
-  #  - name: 'gcr.io/$PROJECT_ID/save_cache'
-  #    id: 'Saving .npm cache'
-  #    args:
-  #      - --bucket=gs://${PROJECT_ID}_cloudbuild
-  #      - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
-  #      - --path=.npm
-  #      - --no-clobber
-  #    waitFor: [ 'Installing NPM dependencies' ]
+        fi
 
   # Build
   - name: 'node:$_NODE_VERSION'
