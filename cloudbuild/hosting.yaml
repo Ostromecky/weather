@@ -9,7 +9,9 @@ steps:
     args:
       - '-c'
       - |
-        echo "_PACKAGE_LOCK_CHANGED=true" > /workspace/env.txt
+        echo "true" > /workspace/env.txt
+    env:
+      - 'PACKAGE_LOCK_CHANGED=$(gsutil cat /workspace/env.txt)'
 
 
   # Step 2: Load environment variables
@@ -19,7 +21,6 @@ steps:
     args:
       - '-c'
       - |
-        echo "Check Package Lock Changed: " $(cat /workspace/env.txt)
         source /workspace/env.txt && env
 
   # Step 3: Restore deps
