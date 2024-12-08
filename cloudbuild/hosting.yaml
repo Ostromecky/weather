@@ -13,6 +13,7 @@ steps:
           echo "_PACKAGE_LOCK_CHANGED=false" >> /workspace/env.txt
         else
           echo "_PACKAGE_LOCK_CHANGED=true" >> /workspace/env.txt
+        fi
 
   # Step 2: Load environment variables
   - id: 'Load environment variables'
