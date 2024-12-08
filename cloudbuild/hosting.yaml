@@ -1,13 +1,5 @@
 steps:
-  # Install
-  #  - name: 'gcr.io/$PROJECT_ID/restore_cache'
-  #    id: 'Restoring NPM modules cache'
-  #    args:
-  #      - --bucket=gs://${PROJECT_ID}_cloudbuild
-  #      - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
-  #      - --key_fallback=npm-build-cache-
-  # Step 1: Download cached Node.js dependencies
-  # Step 1: Check if package-lock.json changed
+  # Check if package-lock.json has changed
   - id: 'Check package-lock.json changes'
     name: 'gcr.io/cloud-builders/gsutil'
     entrypoint: bash
@@ -31,45 +23,14 @@ steps:
     args:
       - '-c'
       - |
-        gsutil cp gs://${PROJECT_ID}-cache-dependencies/npm-cache.tgz npm-cache.tgz || exit 0
-        tar -zxf npm-cache.tgz --C /.npm || echo "No cache found"
-    volumes:
-      - name: 'npm-cache'
-        path: /.npm
+        gsutil cp gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz node-modules.tgz || exit 0
+        tar -zxf node-modules.tgz --directory /workspace || echo "No cache found"
 
   - id: 'Installing NPM dependencies'
     name: 'node:$_NODE_VERSION'
     entrypoint: npm
     args:
       - ci
-      - '--prefer-offline'
-      - '--cache /.npm'
-    volumes:
-        - name: 'npm-cache'
-          path: /.npm
-
-#  - id: 'Saving .npm cache'
-#    waitFor: [ 'Installing NPM dependencies' ]
-#    name: gcr.io/cloud-builders/gsutil
-#    entrypoint: bash
-#    args:
-#      - '-c'
-#      - |
-#        tar -zcf node-modules.tgz ./node_modules
-#        gsutil cp node-modules.tgz gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz
-
-#  - id: 'Saving .npm cache'
-#    waitFor: [ 'Installing NPM dependencies' ]
-#    name: gcr.io/cloud-builders/gsutil
-#    entrypoint: bash
-#    args:
-#      - '-c'
-#      - |
-#        if [ "$(cat /workspace/check.txt)" == "true" ]; then
-#          tar -zcf node-modules.tgz ./node_modules
-#          gsutil cp node-modules.tgz gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz
-#          gsutil cp package-lock.json gs://${PROJECT_ID}-cache-dependencies/package-lock.json
-#        fi
 
   - id: 'Save npm cache'
     name: 'gcr.io/cloud-builders/gsutil'
@@ -78,14 +39,11 @@ steps:
     args:
       - '-c'
       - |
-          tar -zcf npm-cache.tgz -C /.npm .
-          gsutil cp npm-cache.tgz gs://${PROJECT_ID}-cache-dependencies/npm-cache.tgz
+          tar -zcf node-modules.tgz ./node_modules
+          gsutil cp node_modules gs://${PROJECT_ID}-cache-dependencies/node_modules.tgz
           gsutil cp package-lock.json gs://${PROJECT_ID}-cache-dependencies/package-lock.json
 #        if [ "$(cat /workspace/check.txt)" == "true" ]; then
 #        fi
-    volumes:
-      - name: 'npm-cache'
-        path: /.npm
 
 
 
