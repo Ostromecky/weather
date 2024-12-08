@@ -6,28 +6,21 @@ steps:
   - id: 'Check package-lock.json changes'
     name: 'gcr.io/cloud-builders/gsutil'
     entrypoint: bash
-    volumes:
-      - name: 'shared-volume'
-        path: '/workspace/shared'
     args:
       - '-c'
       - |
-        echo "_PACKAGE_LOCK_CHANGED=true" >> /workspace/shared/env.txt
+        echo "_PACKAGE_LOCK_CHANGED=true" > /workspace/check.txt
+
 
   # Step 2: Load environment variables
   - id: 'Load environment variables'
     name: 'alpine:latest'
     entrypoint: sh
-    volumes:
-      - name: 'shared-volume'
-        path: '/workspace/shared'
     args:
       - '-c'
-      - 'source /workspace/shared/env.txt && env'
-
-volumes:
-  - name: 'shared-volume'
-    path: '/workspace/shared'
+      - |
+        echo "Check Package Lock Changed: " $(cat /workspace/check.txt)
+        source /workspace/check.txt && env
 
   # Step 3: Restore deps
   - id: 'Restoring NPM modules cache'
