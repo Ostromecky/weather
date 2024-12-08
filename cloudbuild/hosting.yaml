@@ -39,8 +39,8 @@ steps:
     args:
       - '-c'
       - |
-        $_PACKAGE_LOCK_CHANGED=$(cat /workspace/check.txt)
-        if [ "$_PACKAGE_LOCK_CHANGED" == "false" ]; then
+        PACKAGE_LOCK_CHANGED=$(cat /workspace/check.txt)
+        if [ "$PACKAGE_LOCK_CHANGED" == "false" ]; then
           gsutil cp gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz node-modules.tgz || exit 0
           tar -zxf node-modules.tgz --directory /workspace || exit 0
         fi
@@ -62,9 +62,9 @@ steps:
     args:
       - '-c'
       - |
-        $_PACKAGE_LOCK_CHANGED=$(cat /workspace/check.txt)|
-        echo "Extracted Package lock changed " $(cat $_PACKAGE_LOCK_CHANGED)
-        if [ "$_PACKAGE_LOCK_CHANGED" == "true" ]; then
+        PACKAGE_LOCK_CHANGED=$(cat /workspace/check.txt)
+        echo "Extracted Package lock changed " $(cat $PACKAGE_LOCK_CHANGED)
+        if [ "$PACKAGE_LOCK_CHANGED" == "true" ]; then
           npm ci --no-audit
         fi
 
