@@ -9,9 +9,16 @@ steps:
     args:
       - '-c'
       - |
-        echo "true" > /workspace/env.txt
-    env:
-      - 'PACKAGE_LOCK_CHANGED=$(gsutil cat /workspace/env.txt)'
+        if gsutil stat gs://${PROJECT_ID}-cache-dependencies/package-lock.json; then
+          gsutil cp gs://${PROJECT_ID}-cache-dependencies/package-lock.json old-package-lock.json
+          if cmp -s package-lock.json old-package-lock.json; then
+            echo "false" >> /workspace/check.txt
+          else
+            echo "true" >> /workspace/check.txt
+          fi
+        else
+          echo "true" >> /workspace/check.txt
+        fi
 
 
   # Step 2: Load environment variables
@@ -21,6 +28,7 @@ steps:
     args:
       - '-c'
       - |
+        echo "Package lock changed " $(cat /workspace/check.txt)
         source /workspace/env.txt && env
 
   # Step 3: Restore deps
