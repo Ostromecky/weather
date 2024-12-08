@@ -19,8 +19,8 @@ steps:
     args:
       - '-c'
       - |
-        echo "Check Package Lock Changed: " $(cat /workspace/check.txt)
-        source /workspace/check.txt && env
+        echo "Check Package Lock Changed: " $(cat /workspace/env.txt)
+        source /workspace/env.txt && env
 
   # Step 3: Restore deps
   - id: 'Restoring NPM modules cache'
