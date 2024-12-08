@@ -39,6 +39,7 @@ steps:
     entrypoint: npm
     args:
       - ci
+      - --omit=dev
 
 #  - id: 'Saving .npm cache'
 #    waitFor: [ 'Installing NPM dependencies' ]
@@ -60,6 +61,7 @@ steps:
         if [ "$(cat /workspace/check.txt)" == "true" ]; then
           tar -zcf node-modules.tgz ./node_modules
           gsutil cp node-modules.tgz gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz
+          gsutil cp package-lock.json gs://${PROJECT_ID}-cache-dependencies/package-lock.json
         fi
 
 
