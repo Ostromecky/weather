@@ -33,12 +33,18 @@ steps:
       - |
         gsutil cp gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz node-modules.tgz || exit 0
         tar -zxf node-modules.tgz --directory /root/.npm || echo "No cache found"
+    volumes:
+      - name: 'npm-cache'
+        path: /root/.npm
 
   - id: 'Installing NPM dependencies'
     name: 'node:$_NODE_VERSION'
     entrypoint: npm
     args:
       - ci
+    volumes:
+        - name: 'npm-cache'
+          path: /root/.npm
 
 #  - id: 'Saving .npm cache'
 #    waitFor: [ 'Installing NPM dependencies' ]
