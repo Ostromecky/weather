@@ -32,7 +32,7 @@ steps:
 #    args:
 #      - ci
 
-  - id: 'Install Node.js and conditionally run npm ci'
+  - id: 'Installing NPM dependencies'
     name: 'curlimages/curl:latest' # Base image with curl
     entrypoint: bash
     env:
