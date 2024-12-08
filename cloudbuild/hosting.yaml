@@ -55,16 +55,26 @@ steps:
   ##      condition: '"$_PACKAGE_LOCK_CHANGED" == "true"'
 
   # Step 4: Install deps
-  - name: 'alpine:latest'
-    entrypoint: sh
-    id: 'Installing NPM dependencies'
+#  - name: 'alpine:latest'
+#    entrypoint: sh
+#    id: 'Installing NPM dependencies'
+#    args:
+#      - '-c'
+#      - |
+#        echo "Extracted Package lock changed " $(cat /workspace/check.txt)
+#        if [ "$(cat /workspace/check.txt)" == "true" ]; then
+#          npm ci --no-audit
+#        fi
+  - id: 'Installing NPM dependencies'
+    name: 'node:$_NODE_VERSION'
+    entrypoint: npm
     args:
       - '-c'
       - |
-        echo "Extracted Package lock changed " $(cat /workspace/check.txt)
-
         if [ "$(cat /workspace/check.txt)" == "true" ]; then
           npm ci --no-audit
+        else
+          echo "Skipping npm ci as the condition was not met."
         fi
 
   - id: 'Saving .npm cache'
