@@ -29,7 +29,8 @@ steps:
       - '-c'
       - |
         echo "Package lock changed " $(cat /workspace/check.txt)
-        source /workspace/check.txt && env
+    env:
+      - '_PACKAGE_LOCK_CHANGED=$(cat /workspace/check.txt)'
 
   # Step 3: Restore deps
   - id: 'Restoring NPM modules cache'
