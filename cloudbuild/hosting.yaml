@@ -40,21 +40,17 @@ steps:
     args:
        - '-c'
        - |
-         echo "Installing Node.js version $_NODE_VERSION..."
-
-        # Install Node.js dynamically
+        echo "Installing Node.js version $_NODE_VERSION..."
         curl -fsSL https://deb.nodesource.com/setup_${_NODE_VERSION}.x | bash - &&
         apt-get install -y nodejs &&
         echo "Node.js version: $(node -v)" &&
         echo "npm version: $(npm -v)"
-
-         # Conditionally run npm ci
-         if [ "$(cat /workspace/check.txt)" == "true" ]; then
-           echo "Condition met. Running npm ci..."
-           npm ci
-         else
-           echo "Condition not met. Skipping npm ci."
-         fi
+        if [ "$(cat /workspace/check.txt)" == "true" ]; then
+          echo "Condition met. Running npm ci..."
+          npm ci
+        else
+          echo "Condition not met. Skipping npm ci."
+        fi
 
   - id: 'Save npm cache'
     name: 'gcr.io/cloud-builders/gsutil'
