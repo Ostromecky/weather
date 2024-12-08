@@ -32,10 +32,10 @@ steps:
       - '-c'
       - |
         gsutil cp gs://${PROJECT_ID}-cache-dependencies/npm-cache.tgz npm-cache.tgz || exit 0
-        tar -zxf npm-cache.tgz --C .npm || echo "No cache found"
+        tar -zxf npm-cache.tgz --C /.npm || echo "No cache found"
     volumes:
       - name: 'npm-cache'
-        path: .npm
+        path: /.npm
 
   - id: 'Installing NPM dependencies'
     name: 'node:$_NODE_VERSION'
@@ -43,10 +43,10 @@ steps:
     args:
       - ci
       - '--prefer-offline'
-      - '--cache .npm'
+      - '--cache /.npm'
     volumes:
         - name: 'npm-cache'
-          path: .npm
+          path: /.npm
 
 #  - id: 'Saving .npm cache'
 #    waitFor: [ 'Installing NPM dependencies' ]
@@ -78,14 +78,14 @@ steps:
     args:
       - '-c'
       - |
-          tar -zcf npm-cache.tgz -C .npm .
+          tar -zcf npm-cache.tgz -C /.npm .
           gsutil cp npm-cache.tgz gs://${PROJECT_ID}-cache-dependencies/npm-cache.tgz
           gsutil cp package-lock.json gs://${PROJECT_ID}-cache-dependencies/package-lock.json
 #        if [ "$(cat /workspace/check.txt)" == "true" ]; then
 #        fi
     volumes:
       - name: 'npm-cache'
-        path: .npm
+        path: /.npm
 
 
 
