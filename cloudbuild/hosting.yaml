@@ -22,15 +22,15 @@ steps:
 
 
 #   Step 2: Load environment variables
-  - id: 'Load environment variables'
-    name: 'alpine:latest'
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
-        echo "Package lock changed " $(cat /workspace/check.txt)
-    env:
-      - 'PACKAGE_LOCK_CHANGED=$(cat /workspace/check.txt)'
+#  - id: 'Load environment variables'
+#    name: 'alpine:latest'
+#    entrypoint: sh
+#    args:
+#      - '-c'
+#      - |
+#        echo "Package lock changed " $(cat /workspace/check.txt)
+#    env:
+#      - 'PACKAGE_LOCK_CHANGED=$(cat /workspace/check.txt)'
 
   # Step 3: Restore deps
   - id: 'Restoring NPM modules cache'
@@ -40,10 +40,13 @@ steps:
       - '-c'
       - |
         echo "Package lock changed " $PACKAGE_LOCK_CHANGED
-        if [ "$PACKAGE_LOCK_CHANGED" == "false" ]; then
+        if [ "$_PACKAGE_LOCK_CHANGED" == "false" ]; then
           gsutil cp gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz node-modules.tgz || exit 0
           tar -zxf node-modules.tgz --directory /workspace || exit 0
         fi
+    automapSubstitutions: true
+    substitutions:
+      _PACKAGE_LOCK_CHANGED: $(cat /workspace/check.txt)
 
   # Step 4: Install deps
   #  - name: 'node:$_NODE_VERSION'
@@ -62,11 +65,14 @@ steps:
     args:
       - '-c'
       - |
-        PACKAGE_LOCK_CHANGED=$(cat /workspace/check.txt)
-        echo "Extracted Package lock changed " $(cat $PACKAGE_LOCK_CHANGED)
-        if [ "$PACKAGE_LOCK_CHANGED" == "true" ]; then
+        echo "Extracted Package lock changed " $(cat $_PACKAGE_LOCK_CHANGED)
+        if [ "$_PACKAGE_LOCK_CHANGED" == "true" ]; then
           npm ci --no-audit
         fi
+        options:
+    automapSubstitutions: true
+    substitutions:
+      _PACKAGE_LOCK_CHANGED: $(cat /workspace/check.txt)
 
   - id: 'Saving .npm cache'
     waitFor: [ 'Installing NPM dependencies' ]
