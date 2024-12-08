@@ -42,6 +42,8 @@ steps:
     entrypoint: npm
     args:
       - ci
+      - '--prefer-offline'
+      - '--cache .npm'
     volumes:
         - name: 'npm-cache'
           path: /root/.npm
@@ -76,11 +78,11 @@ steps:
     args:
       - '-c'
       - |
+        if [ "$(cat /workspace/check.txt)" == "true" ]; then
           tar -zcf npm-cache.tgz -C /root/.npm .
           gsutil cp npm-cache.tgz gs://${PROJECT_ID}-cache-dependencies/npm-cache.tgz
           gsutil cp package-lock.json gs://${PROJECT_ID}-cache-dependencies/package-lock.json
-#        if [ "$(cat /workspace/check.txt)" == "true" ]; then
-#        fi
+        fi
     volumes:
       - name: 'npm-cache'
         path: /root/.npm
