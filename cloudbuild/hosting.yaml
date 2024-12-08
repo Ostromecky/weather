@@ -1,7 +1,12 @@
-options:
-  machineType: 'N1_HIGHCPU_8'
-
 steps:
+  # Install
+  #  - name: 'gcr.io/$PROJECT_ID/restore_cache'
+  #    id: 'Restoring NPM modules cache'
+  #    args:
+  #      - --bucket=gs://${PROJECT_ID}_cloudbuild
+  #      - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
+  #      - --key_fallback=npm-build-cache-
+  # Step 1: Download cached Node.js dependencies
   # Step 1: Check if package-lock.json changed
   - id: 'Check package-lock.json changes'
     name: 'gcr.io/cloud-builders/gsutil'
@@ -20,64 +25,30 @@ steps:
           echo "true" >> /workspace/check.txt
         fi
 
-
-#   Step 2: Load environment variables
-#  - id: 'Load environment variables'
-#    name: 'alpine:latest'
-#    entrypoint: sh
-#    args:
-#      - '-c'
-#      - |
-#        echo "Package lock changed " $(cat /workspace/check.txt)
-#    env:
-#      - 'PACKAGE_LOCK_CHANGED=$(cat /workspace/check.txt)'
-
-  # Step 3: Restore deps
   - id: 'Restoring NPM modules cache'
     name: gcr.io/cloud-builders/gsutil
     entrypoint: bash
     args:
       - '-c'
       - |
-        if [ "$_PACKAGE_LOCK_CHANGED" == "false" ]; then
-          gsutil cp gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz node-modules.tgz || exit 0
-          tar -zxf node-modules.tgz --directory /workspace || exit 0
-        fi
+        gsutil cp gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz node-modules.tgz || exit 0
+        tar -zxf node-modules.tgz --directory /workspace || echo "No cache found"
 
-  # Step 4: Install deps
-  #  - name: 'node:$_NODE_VERSION'
-  #    entrypoint: npm
-  #    id: 'Installing NPM dependencies'
-  #    args:
-  #      - ci
-  #      - --no-audit
-  ##    when:
-  ##      condition: '"$_PACKAGE_LOCK_CHANGED" == "true"'
-
-  # Step 4: Install deps
-  - name: 'alpine:latest'
-    entrypoint: sh
-    id: 'Installing NPM dependencies'
+  - id: 'Installing NPM dependencies'
+    name: 'node:$_NODE_VERSION'
+    entrypoint: npm
     args:
-      - '-c'
-      - |
-        curl -fsSL https://deb.nodesource.com/setup_$_NODE_VERSION | bash -
-        apt-get install -y nodejs
-        echo "Extracted Package lock changed " $(cat /workspace/check.txt)
-        if [ "$(cat /workspace/check.txt)" == "true" ]; then
-          npm ci --no-audit
-        fi
-#  - id: 'Installing NPM dependencies'
-#    name: 'node:$_NODE_VERSION'
-#    entrypoint: npm
+      - ci
+
+#  - id: 'Saving .npm cache'
+#    waitFor: [ 'Installing NPM dependencies' ]
+#    name: gcr.io/cloud-builders/gsutil
+#    entrypoint: bash
 #    args:
 #      - '-c'
 #      - |
-#        if [ "$(cat /workspace/check.txt)" == "true" ]; then
-#          npm ci --no-audit
-#        else
-#          echo "Skipping npm ci as the condition was not met."
-#        fi
+#        tar -zcf node-modules.tgz ./node_modules
+#        gsutil cp node-modules.tgz gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz
 
   - id: 'Saving .npm cache'
     waitFor: [ 'Installing NPM dependencies' ]
@@ -86,16 +57,29 @@ steps:
     args:
       - '-c'
       - |
-        if [ "$_PACKAGE_LOCK_CHANGED" == "true" ]; then
+        if [ "$(cat /workspace/check.txt)" == "true" ]; then
           tar -zcf node-modules.tgz ./node_modules
           gsutil cp node-modules.tgz gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz
         fi
 
-  # Step 5: Build
+
+
+  #  - name: 'gcr.io/$PROJECT_ID/save_cache'
+  #    id: 'Saving .npm cache'
+  #    args:
+  #      - --bucket=gs://${PROJECT_ID}_cloudbuild
+  #      - --key=npm-build-cache-$( checksum package.json )-$( checksum package-lock.json )
+  #      - --path=.npm
+  #      - --no-clobber
+  #    waitFor: [ 'Installing NPM dependencies' ]
+
+  # Build
   - name: 'node:$_NODE_VERSION'
     entrypoint: npm
     args: [ 'run', 'build' ]
-
-    # Step 6: Deploy
+    # Deploy
   - name: 'gcr.io/$PROJECT_ID/firebase'
     args: [ 'deploy', '--only=hosting' ]
+
+options:
+  machineType: 'N1_HIGHCPU_8'
