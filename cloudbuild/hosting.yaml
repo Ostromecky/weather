@@ -3,17 +3,23 @@ options:
 
 steps:
   # Step 1: Check if package-lock.json changed
-  - id: 'Check for package-lock changes'
-    name: 'alpine:latest'
-    entrypoint: sh
+  - id: 'Check package-lock.json changes'
+    name: 'gcr.io/cloud-builders/gsutil'
+    entrypoint: bash
     args:
       - '-c'
       - |
-        if git diff --quiet HEAD~1 HEAD -- package-lock.json; then
-          echo "_PACKAGE_LOCK_CHANGED=false" >> /workspace/env.txt
+        if gsutil stat gs://${PROJECT_ID}-cache-dependencies/package-lock.json; then
+          gsutil cp gs://${PROJECT_ID}-cache-dependencies/package-lock.json old-package-lock.json
+          if cmp -s package-lock.json old-package-lock.json; then
+            echo "_PACKAGE_LOCK_CHANGED=false" >> /workspace/env.txt
+          else
+            echo "_PACKAGE_LOCK_CHANGED=true" >> /workspace/env.txt
+          fi
         else
           echo "_PACKAGE_LOCK_CHANGED=true" >> /workspace/env.txt
         fi
+
 
   # Step 2: Load environment variables
   - id: 'Load environment variables'
@@ -36,14 +42,14 @@ steps:
         fi
 
   # Step 4: Install deps
-#  - name: 'node:$_NODE_VERSION'
-#    entrypoint: npm
-#    id: 'Installing NPM dependencies'
-#    args:
-#      - ci
-#      - --no-audit
-##    when:
-##      condition: '"$_PACKAGE_LOCK_CHANGED" == "true"'
+  #  - name: 'node:$_NODE_VERSION'
+  #    entrypoint: npm
+  #    id: 'Installing NPM dependencies'
+  #    args:
+  #      - ci
+  #      - --no-audit
+  ##    when:
+  ##      condition: '"$_PACKAGE_LOCK_CHANGED" == "true"'
 
   # Step 4: Install deps
   - name: 'alpine:latest'
