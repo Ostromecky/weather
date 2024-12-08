@@ -9,7 +9,8 @@ steps:
     args:
       - '-c'
       - |
-        echo "_PACKAGE_LOCK_CHANGED=true" >> /workspace/env.txt
+#        echo "_PACKAGE_LOCK_CHANGED=true" >> /workspace/env.txt
+        export _PACKAGE_LOCK_CHANGED=true
 #        if gsutil stat gs://${PROJECT_ID}-cache-dependencies/package-lock.json; then
 #          gsutil cp gs://${PROJECT_ID}-cache-dependencies/package-lock.json old-package-lock.json
 #          if cmp -s package-lock.json old-package-lock.json; then
