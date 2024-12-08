@@ -9,7 +9,7 @@ steps:
     args:
       - '-c'
       - |
-        echo "_PACKAGE_LOCK_CHANGED=true" > /workspace/check.txt
+        echo "_PACKAGE_LOCK_CHANGED=true" > /workspace/env.txt
 
 
   # Step 2: Load environment variables
