@@ -41,7 +41,7 @@ steps:
     name: 'node:$_NODE_VERSION'
     entrypoint: npm
     args:
-      - ci --prefer-offline --cache /root/.npm
+      - ci
     volumes:
         - name: 'npm-cache'
           path: /root/.npm
