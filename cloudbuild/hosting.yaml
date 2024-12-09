@@ -26,29 +26,29 @@ steps:
         gsutil cp gs://${PROJECT_ID}-cache-dependencies/cache/node-modules.tgz node-modules.tgz || exit 0
         tar -zxf node-modules.tgz --directory /workspace || echo "No cache found"
 
-#  - id: 'Installing NPM dependencies'
-#    name: 'node:$_NODE_VERSION'
-#    entrypoint: npm
-#    args:
-#      - ci
-
   - id: 'Installing NPM dependencies'
-    name: gcr.io/cloud-builders/gcloud
-    entrypoint: "bash"
+    name: 'node:$_NODE_VERSION'
+    entrypoint: npm
     args:
-       - '-c'
-       - |
-        echo "Installing Node.js version $_NODE_VERSION..."
-        curl -fsSL https://deb.nodesource.com/setup_${_NODE_VERSION}.x | bash - &&
-        apt-get install -y nodejs &&
-        echo "Node.js version: $(node -v)" &&
-        echo "npm version: $(npm -v)"
-        if [ "$(cat /workspace/check.txt)" == "true" ]; then
-          echo "Condition met. Running npm ci..."
-          npm ci
-        else
-          echo "Condition not met. Skipping npm ci."
-        fi
+      - ci
+
+#  - id: 'Installing NPM dependencies'
+#    name: gcr.io/cloud-builders/gcloud
+#    entrypoint: "bash"
+#    args:
+#       - '-c'
+#       - |
+#        echo "Installing Node.js version $_NODE_VERSION..."
+#        curl -fsSL https://deb.nodesource.com/setup_${_NODE_VERSION}.x | bash - &&
+#        apt-get install -y nodejs &&
+#        echo "Node.js version: $(node -v)" &&
+#        echo "npm version: $(npm -v)"
+#        if [ "$(cat /workspace/check.txt)" == "true" ]; then
+#          echo "Condition met. Running npm ci..."
+#          npm ci
+#        else
+#          echo "Condition not met. Skipping npm ci."
+#        fi
 
   - id: 'Save npm cache'
     name: 'gcr.io/cloud-builders/gsutil'
